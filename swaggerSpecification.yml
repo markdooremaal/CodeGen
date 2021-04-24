@@ -1,0 +1,203 @@
+openapi: 3.0.0
+info:
+  description: This is the API for the 2.4 Code Generation Bank application
+  version: "0.0.1"
+  title: Bank API
+paths:
+  /Transactions:
+    get:
+      tags:
+        - Get All Transactions
+      summary: Get all Transactions
+      operationId: getAllTransactions
+      description: Calling this allows you to fetch all transactions
+      responses:
+        '200':
+          description: The transactions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: bad input parameter
+  /Transactions/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the transaction to get
+      tags:
+        - Get Transaction by ID
+      summary: Get a transaction by id
+      operationId: getTransactionById
+      description: Calling this allows you to fetch a specific transaction by id
+      responses:
+        '200':
+          description: the transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: bad input parameter        
+  
+  /Users:
+    get:
+      tags:
+        - Get All Users
+      summary: Get all Users
+      operationId: getAllUsers
+      description: Calling this allows you to fetch all users
+      responses:
+        '200':
+          description: The users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: bad input parameter
+  /Users/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      tags:
+        - Get User by ID
+      summary: Get a user by id
+      operationId: getUserById
+      description: Calling this allows you to fetch a specific user by id
+      responses:
+        '200':
+          description: the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: bad input parameter  
+          
+  /BankAccounts:
+    get:
+      tags:
+        - Get All Accounts
+      summary: Get all Bank Accounts
+      operationId: getAllAccounts
+      description: Calling this allows you to fetch all Bank Accounts
+      responses:
+        '200':
+          description: The Bank Accounts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccount'
+        '400':
+          description: bad input parameter
+  /BankAccounts/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: IBAN of the Bank Account to get
+      tags:
+        - Get Bank Account by IBAN
+      summary: Get a Bank Account by IBAN
+      operationId: getAccountById
+      description: Calling this allows you to fetch a specific Bank Account by id
+      responses:
+        '200':
+          description: the Bank Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccount'
+        '400':
+          description: bad input parameter  
+components:
+  schemas:
+    Transaction:
+      type: object
+      required:
+        - id
+        - accountFrom
+        - accountTo
+        #user Performing can be set based on auth user
+        - amount
+      properties:
+        id:
+          type: integer
+        accountFrom:
+          type: string
+        accountTo:
+          type: string
+        userPerforming:
+          type: integer
+        amount:
+          type: number
+          format: double
+          
+    BankAccount:
+      type: object
+      required:
+        - id
+        - userid
+        - type
+        - balance
+        - absoluteLimit
+        - dayLimit
+        - transactionLimit
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        type:         #TODO: Not sure how to implement enum
+          type: string
+        balance:
+          type: number
+          format: double        
+        absoluteLimit:
+          type: number
+          format: double
+        dayLimit:
+          type: number
+          format: double
+        transactionLimit:
+          type: number
+          format: double    
+      
+    User:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - password
+        - role
+        - status
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string          
+        password:
+          type: string
+        role:       #TODO: Properly impleemnt enums here too
+          type: string          
+        status:
+          type: string
