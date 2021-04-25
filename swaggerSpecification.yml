@@ -6,22 +6,26 @@ info:
 paths:
   /Transactions:
     get:
+      security:
+        - bearerAuth: []
       tags:
-        - Get All Transactions
+        - Transactions
       summary: Get all Transactions
       operationId: getAllTransactions
       description: Calling this allows you to fetch all transactions
       responses:
-        '200':
+        "200":
           description: The transactions
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
-        '400':
+                $ref: "#/components/schemas/Transaction"
+        "400":
           description: bad input parameter
   /Transactions/{id}:
     get:
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -30,38 +34,66 @@ paths:
           required: true
           description: Numeric ID of the transaction to get
       tags:
-        - Get Transaction by ID
+        - Transactions
       summary: Get a transaction by id
       operationId: getTransactionById
       description: Calling this allows you to fetch a specific transaction by id
       responses:
-        '200':
+        "200":
           description: the transaction
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
-        '400':
-          description: bad input parameter        
-  
+                $ref: "#/components/schemas/Transaction"
+        "400":
+          description: bad input parameter
+
   /Users:
     get:
+      security:
+        - bearerAuth: []
       tags:
-        - Get All Users
+        - Users
       summary: Get all Users
       operationId: getAllUsers
       description: Calling this allows you to fetch all users
       responses:
-        '200':
+        "200":
           description: The users
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '400':
+                $ref: "#/components/schemas/User"
+        "400":
+          description: bad input parameter
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+      summary: Create new user
+      requestBody:
+        description: User object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      operationId: createUser
+      description: Calling this allows you to create a new user
+      responses:
+        "200":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
           description: bad input parameter
   /Users/{id}:
     get:
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -70,38 +102,78 @@ paths:
           required: true
           description: Numeric ID of the user to get
       tags:
-        - Get User by ID
+        - Users
       summary: Get a user by id
       operationId: getUserById
       description: Calling this allows you to fetch a specific user by id
       responses:
-        '200':
+        "200":
           description: the user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: bad input parameter  
-          
+                $ref: "#/components/schemas/User"
+        "400":
+          description: bad input parameter
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+      summary: Update a user
+      requestBody:
+        description: User object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      operationId: updateUser
+      description: Calling this allows you to update a user
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: bad input parameter
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Users
+      summary: Deletes a user
+      operationId: deleteUser
+      description: Calling this allows you to delete a user
+      responses:
+        "200":
+          description: User deleted
+        "400":
+          description: bad input parameter
   /BankAccounts:
     get:
+      security:
+        - bearerAuth: []
       tags:
-        - Get All Accounts
+        - Accounts
       summary: Get all Bank Accounts
       operationId: getAllAccounts
       description: Calling this allows you to fetch all Bank Accounts
       responses:
-        '200':
+        "200":
           description: The Bank Accounts
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BankAccount'
-        '400':
+                $ref: "#/components/schemas/BankAccount"
+        "400":
           description: bad input parameter
   /BankAccounts/{id}:
     get:
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -110,20 +182,26 @@ paths:
           required: true
           description: IBAN of the Bank Account to get
       tags:
-        - Get Bank Account by IBAN
+        - Accounts
       summary: Get a Bank Account by IBAN
       operationId: getAccountById
       description: Calling this allows you to fetch a specific Bank Account by id
       responses:
-        '200':
+        "200":
           description: the Bank Account
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BankAccount'
-        '400':
-          description: bad input parameter  
+                $ref: "#/components/schemas/BankAccount"
+        "400":
+          description: bad input parameter
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     Transaction:
       type: object
@@ -145,27 +223,27 @@ components:
         amount:
           type: number
           format: double
-          
+
     BankAccount:
       type: object
       required:
         - id
-        - userid
+        - userId
         - type
-        - balance
-        - absoluteLimit
-        - dayLimit
-        - transactionLimit
+        # - balance -- Deze maken we niet required right?
+        # - absoluteLimit
+        # - dayLimit
+        # - transactionLimit
       properties:
         id:
           type: integer
         userId:
           type: integer
-        type:         #TODO: Not sure how to implement enum
+        type: #TODO: Not sure how to implement enum
           type: string
         balance:
           type: number
-          format: double        
+          format: double
         absoluteLimit:
           type: number
           format: double
@@ -174,12 +252,12 @@ components:
           format: double
         transactionLimit:
           type: number
-          format: double    
-      
+          format: double
+
     User:
       type: object
       required:
-        - id
+        # - id
         - firstName
         - lastName
         - email
@@ -194,10 +272,10 @@ components:
         lastName:
           type: string
         email:
-          type: string          
+          type: string
         password:
           type: string
-        role:       #TODO: Properly impleemnt enums here too
-          type: string          
+        role: #TODO: Properly impleemnt enums here too
+          type: string
         status:
           type: string
