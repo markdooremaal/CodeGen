@@ -6,14 +6,34 @@ info:
 paths:
   
   /Transactions: 
-    get: #TODO: With filter options like IBAN, from/to -account
+    get: 
       security:
         - bearerAuth: []
       tags:
         - Transactions
-      summary: Get all Transactions
+      summary: Get all Transactions, with the option to filter.
+      parameters:
+        - in: query
+          name: ibanFrom
+          schema:
+            type: string
+            format: IBAN
+        - in: query
+          name: ibanTo
+          schema: 
+            type: string
+            format: IBAN
+        - in: query
+          name: userPerforming
+          schema: 
+            type: string
+        - in: query
+          name: timestamp
+          schema: 
+            type: string
+            format: date-time
       operationId: getAllTransactions
-      description: Calling this allows you to fetch all transactions
+      description: Calling this allows you to fetch all transactions. Apply query's to filter results.
       responses:
         "200":
           description: Array of relevant transactions
@@ -74,18 +94,43 @@ paths:
     get: #TODO: With filter options like first- lastname, IBAN
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: name
+          description: first-/lastname or both
+          schema:
+            type: string
+        - in: query
+          name: email
+          schema: 
+            type: string
+            format: email
+        - in: query
+          name: role
+          schema: 
+            type: string
+            enum:
+              - Customer
+              - Employee
+        - in: query
+          name: status
+          schema: 
+            type: string
+            enum:
+              - Active
+              - Inactive
       tags:
         - Users
-      summary: Get all Users
+      summary: Get all Users, with the option to filter.
       operationId: getAllUsers
-      description: Calling this allows you to fetch all users
+      description: Calling this allows you to fetch all users. Apply query's to filter results.
       responses:
         "200":
           description: The users
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/ArrayOfUsers"
         "400":
           description: bad input parameter
     post:
@@ -106,10 +151,6 @@ paths:
       responses:
         "200":
           description: User created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
         "400":
           description: bad input parameter
   
@@ -135,12 +176,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/ReturnBodyUser"
         "400":
           description: bad input parameter
     put:
       security:
         - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to update
       tags:
         - Users
       summary: Update a user
@@ -161,6 +209,13 @@ paths:
     delete:
       security:
         - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to make inactive
       tags:
         - Users
       summary: Makes a user inactive
@@ -187,7 +242,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BankAccount"
+                $ref: "#/components/schemas/ReturnBodyBankAccount"
         "400":
           description: bad input parameter
     post:
@@ -233,7 +288,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BankAccount"
+                $ref: "#/components/schemas/ReturnBodyBankAccount"
         "400":
           description: bad input parameter
     put:
@@ -320,8 +375,8 @@ components:
         status:
           type: string
           enum:
-            - open
-            - closed
+            - Open
+            - Closed
         type:
           type: string
           enum:
@@ -361,8 +416,8 @@ components:
         status:
           type: string
           enum:
-            - active
-            - inactive
+            - Active
+            - Inactive
         dayLimit:
           type: number
           format: double
@@ -374,7 +429,7 @@ components:
       description: Return body type of Transaction      
       type: object
       properties:
-        Id:
+        id:
           description: Unique transaction id
           type: integer
           example: 1
@@ -388,8 +443,9 @@ components:
           example: NL01INHO0000000002
         userPerforming:
           description: Id of user performing the transaction
-          type: integer
-          example: 1
+          type: array
+          items: 
+            $ref: '#/components/schemas/ReturnBodyUserSimple'
         amount:
           description: The amount of money
           type: number
@@ -410,8 +466,135 @@ components:
     ReturnBodyBankAccount:
       description: Return body type of BankAccount       
       type: object
+      properties:
+        iban:
+          description: The unique identifier for the account
+          type: string
+          format: iban
+          example: NL01INHO0000000001
+        userId:
+          description: Owner of the bank account
+          type: integer
+          example: 1
+        status:
+          description: Status of the account
+          type: string
+          enum:
+            - Open
+            - Closed
+          example: Open
+        type:
+          description: Account type
+          type: string
+          enum:
+            - Regular
+            - Savings
+          example: Regular
+        balance:
+          description: The ammount of money on the account
+          type: number
+          format: double
+          example: 500.50
+        absoluteLimit:
+          description: The absolute minimum of the account
+          type: number
+          format: double
+          example: -1000
+
+    ArrayOfBankAccounts:
+      description: Array of return body of bank accounts
+      type: array
+      items:
+        $ref: '#/components/schemas/ReturnBodyBankAccount'
     
     ReturnBodyUser:
       description: Return body type of User 
       type: object
+      properties:
+        id:
+          description: Unique user id
+          type: integer
+          example: 1
+        firstname:
+          description: Users firstname
+          type: string
+          example: John
+        lastname: 
+          description: Users lastname
+          type: string
+          example: Doe
+        email:
+          description: Users email
+          type: string
+          example: johndoe@example.dev
+        role:
+          description: Users role
+          type: string
+          enum:
+            - Customer
+            - Employee
+          example: Customer
+        status:
+          description: Users status
+          type: string
+          enum:
+            - Active
+            - Inactive
+          example: Active
+        dayLimit:
+          description: The max spending for the user per day
+          type: number
+          format: double
+          example: 499.90
+        transactionLimit:
+          description: The max spending for the user
+          type: number
+          format: double
+          example: 499.90
+        bankAccounts:
+          description: Users accounts
+          items:
+            $ref: '#/components/schemas/ReturnBodyBankAccount'   
+
+    ReturnBodyUserSimple:
+      description: Return body type of User 
+      type: object
+      properties:
+        id:
+          description: Unique user id
+          type: integer
+          example: 1
+        firstname:
+          description: Users firstname
+          type: string
+          example: John
+        lastname: 
+          description: Users lastname
+          type: string
+          example: Doe
+        email:
+          description: Users email
+          type: string
+          example: johndoe@example.dev
+        role:
+          description: Users role
+          type: string
+          enum:
+            - Customer
+            - Employee
+          example: Customer
+        status:
+          description: Users status
+          type: string
+          enum:
+            - Active
+            - Inactive
+          example: Active  
+
+    ArrayOfUsers:
+      description: Array of return body of Users
+      type: array
+      items:
+        $ref: '#/components/schemas/ReturnBodyUser'     
+    
 
