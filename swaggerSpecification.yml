@@ -1,10 +1,9 @@
 openapi: 3.0.0
 info:
   description: This is the API for the 2.4 Code Generation Bank application
-  version: "0.0.1"
+  version: "0.1.0"
   title: Bank API
 paths:
-  
   /Login:
     post:
       tags:
@@ -37,9 +36,8 @@ paths:
         "400":
           description: bad input parameter
 
-
-  /Transactions: 
-    get: 
+  /Transactions:
+    get:
       security:
         - bearerAuth: []
       tags:
@@ -53,16 +51,16 @@ paths:
             format: IBAN
         - in: query
           name: ibanTo
-          schema: 
+          schema:
             type: string
             format: IBAN
         - in: query
           name: userPerforming
-          schema: 
+          schema:
             type: string
         - in: query
           name: timestamp
-          schema: 
+          schema:
             type: string
             format: date-time
       operationId: getAllTransactions
@@ -73,7 +71,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ArrayOfTransactions"
+                $ref: "#/components/schemas/Transaction"
         "400":
           description: bad input parameter
     post:
@@ -94,6 +92,10 @@ paths:
       responses:
         "200":
           description: The transaction is made
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
         "400":
           description: bad input parameter
 
@@ -119,7 +121,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ReturnBodyTransaction"
+                $ref: "#/components/schemas/Transaction"
         "400":
           description: bad input parameter
 
@@ -135,19 +137,19 @@ paths:
             type: string
         - in: query
           name: email
-          schema: 
+          schema:
             type: string
             format: email
         - in: query
           name: role
-          schema: 
+          schema:
             type: string
             enum:
               - Customer
               - Employee
         - in: query
           name: status
-          schema: 
+          schema:
             type: string
             enum:
               - Active
@@ -163,7 +165,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ArrayOfUsers"
+                $ref: "#/components/schemas/User"
         "400":
           description: bad input parameter
     post:
@@ -184,9 +186,13 @@ paths:
       responses:
         "200":
           description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
         "400":
           description: bad input parameter
-  
+
   /Users/{id}:
     get:
       security:
@@ -209,7 +215,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ReturnBodyUser"
+                $ref: "#/components/schemas/User"
         "400":
           description: bad input parameter
     put:
@@ -237,6 +243,10 @@ paths:
       responses:
         "200":
           description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
         "400":
           description: bad input parameter
     delete:
@@ -259,7 +269,7 @@ paths:
           description: User is now inactive
         "400":
           description: bad input parameter
-  
+
   /BankAccounts:
     get:
       security:
@@ -275,7 +285,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ReturnBodyBankAccount"
+                $ref: "#/components/schemas/BankAccount"
         "400":
           description: bad input parameter
     post:
@@ -296,6 +306,10 @@ paths:
       responses:
         "200":
           description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BankAccount"
         "400":
           description: bad input parameter
 
@@ -321,7 +335,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ReturnBodyBankAccount"
+                $ref: "#/components/schemas/BankAccount"
         "400":
           description: bad input parameter
     put:
@@ -342,6 +356,10 @@ paths:
       responses:
         "200":
           description: Account updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BankAccount"
         "400":
           description: bad input parameter
     delete:
@@ -373,6 +391,9 @@ components:
       bearerFormat: JWT
 
   schemas:
+
+    # :TODO De 'required' fields nog even doorlopen.
+
     Transaction:
       type: object
       required:
@@ -380,87 +401,6 @@ components:
         - accountTo
         - userPerforming # Can be set based on Bearer-Token
         - amount
-        - timestamp
-      properties:
-        accountFrom:
-          type: string
-        accountTo:
-          type: string
-        userPerforming:
-          type: integer
-        amount:
-          type: number
-          format: double
-        timestamp:
-          type: string
-          format: date-time
-
-    BankAccount:
-      type: object
-      required:
-        - userId
-        - type
-        - status
-        - absoluteLimit
-      properties:
-        userId:
-          type: integer
-        status:
-          type: string
-          enum:
-            - Open
-            - Closed
-        type:
-          type: string
-          enum:
-            - Regular
-            - Savings
-        balance:
-          type: number
-          format: double
-        absoluteLimit:
-          type: number
-          format: double
-
-    User:
-      type: object
-      required:
-        - firstName
-        - lastName
-        - email
-        - password
-        - status
-        - dayLimit
-        - transactionLimit
-      properties:
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        role:
-          type: string
-          enum:
-            - Customer
-            - Employee
-        status:
-          type: string
-          enum:
-            - Active
-            - Inactive
-        dayLimit:
-          type: number
-          format: double
-        transactionLimit:
-          type: number
-          format: double
-
-    ReturnBodyTransaction:
-      description: Return body type of Transaction      
-      type: object
       properties:
         id:
           description: Unique transaction id
@@ -469,16 +409,16 @@ components:
         accountFrom:
           description: Sending account
           type: string
+          pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/ 
           example: NL01INHO0000000001
         accountTo:
           description: Receiving account
           type: string
+          pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
           example: NL01INHO0000000002
         userPerforming:
           description: Id of user performing the transaction
-          type: array
-          items: 
-            $ref: '#/components/schemas/ReturnBodyUserSimple'
+          $ref: "#/components/schemas/User"
         amount:
           description: The amount of money
           type: number
@@ -489,21 +429,19 @@ components:
           type: string
           format: date-time
           example: 01-02-2021 12:06:03
-    
-    ArrayOfTransactions:
-      description: Array of return body of Transactions
-      type: array
-      items:
-        $ref: '#/components/schemas/ReturnBodyTransaction'
 
-    ReturnBodyBankAccount:
-      description: Return body type of BankAccount       
+    BankAccount:
       type: object
+      required:
+        - userId
+        - type
+        - status
+        - absoluteLimit
       properties:
         iban:
           description: The unique identifier for the account
           type: string
-          format: iban
+          pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
           example: NL01INHO0000000001
         userId:
           description: Owner of the bank account
@@ -519,10 +457,8 @@ components:
         type:
           description: Account type
           type: string
-          enum:
-            - Regular
-            - Savings
-          example: Regular
+          enum: [regular, savings]
+          example: regular
         balance:
           description: The ammount of money on the account
           type: number
@@ -534,46 +470,49 @@ components:
           format: double
           example: -1000
 
-    ArrayOfBankAccounts:
-      description: Array of return body of bank accounts
-      type: array
-      items:
-        $ref: '#/components/schemas/ReturnBodyBankAccount'
-    
-    ReturnBodyUser:
-      description: Return body type of User 
+    User:
       type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+        - status
+        - dayLimit
+        - transactionLimit
       properties:
         id:
           description: Unique user id
           type: integer
           example: 1
-        firstname:
+        firstName:
           description: Users firstname
           type: string
           example: John
-        lastname: 
+        lastName:
           description: Users lastname
           type: string
           example: Doe
         email:
           description: Users email
           type: string
+          format: email
           example: johndoe@example.dev
+        password:
+          description: Users password
+          type: string
+          format: password
+          example: goedWachtwoord94!
         role:
           description: Users role
           type: string
-          enum:
-            - Customer
-            - Employee
-          example: Customer
+          enum: [customer, employee]
+          example: customer
         status:
           description: Users status
           type: string
-          enum:
-            - Active
-            - Inactive
-          example: Active
+          enum: [active, inactive]
+          example: sctive
         dayLimit:
           description: The max spending for the user per day
           type: number
@@ -584,50 +523,3 @@ components:
           type: number
           format: double
           example: 499.90
-        bankAccounts:
-          description: Users accounts
-          items:
-            $ref: '#/components/schemas/ReturnBodyBankAccount'   
-
-    ReturnBodyUserSimple:
-      description: Return body type of User 
-      type: object
-      properties:
-        id:
-          description: Unique user id
-          type: integer
-          example: 1
-        firstname:
-          description: Users firstname
-          type: string
-          example: John
-        lastname: 
-          description: Users lastname
-          type: string
-          example: Doe
-        email:
-          description: Users email
-          type: string
-          example: johndoe@example.dev
-        role:
-          description: Users role
-          type: string
-          enum:
-            - Customer
-            - Employee
-          example: Customer
-        status:
-          description: Users status
-          type: string
-          enum:
-            - Active
-            - Inactive
-          example: Active  
-
-    ArrayOfUsers:
-      description: Array of return body of Users
-      type: array
-      items:
-        $ref: '#/components/schemas/ReturnBodyUser'     
-    
-
