@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: This is the API for the 2.4 Code Generation Bank application
-  version: "0.1.0"
+  version: "1.0.0"
   title: Bank API
 paths:
   /Login:
@@ -9,6 +9,22 @@ paths:
       tags:
         - Auth
       summary: Logs the user in.
+      requestBody:
+        description: Username and password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: johndoe@gmail.com
+                password:
+                  type: string
+                  format: password
+                  example: goedwachtwoord2!
       operationId: login
       description: Create a token for the given username and password. Which the client can than use to access the protected api endpoints.
       responses:
@@ -16,8 +32,13 @@ paths:
           description: The user is logged in.
           content:
             application/json:
-              example:
-                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    format: byte
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
         "400":
           description: bad input parameter
 
@@ -41,19 +62,19 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - Transactions
+        - Transactions and Transfers
       summary: Get all Transactions, with the option to filter.
       parameters:
         - in: query
           name: ibanFrom
           schema:
             type: string
-            format: IBAN
+            pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
         - in: query
           name: ibanTo
           schema:
             type: string
-            format: IBAN
+            pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
         - in: query
           name: userPerforming
           schema:
@@ -63,6 +84,11 @@ paths:
           schema:
             type: string
             format: date-time
+        - in: query
+          name: ibanToOrFrom
+          schema:
+            type: string
+            pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
       operationId: getAllTransactions
       description: Calling this allows you to fetch all transactions. Apply query's to filter results.
       responses:
@@ -78,7 +104,7 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - Transactions
+        - Transactions and Transfers
       summary: Create a new transaction
       requestBody:
         description: Transaction object
@@ -111,7 +137,7 @@ paths:
           required: true
           description: Numeric ID of the transaction to get
       tags:
-        - Transactions
+        - Transactions and Transfers
       summary: Get a transaction by id
       operationId: getTransactionById
       description: Calling this allows you to fetch a specific transaction by id
@@ -122,6 +148,97 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Transaction"
+        "400":
+          description: bad input parameter
+
+  /Transfers:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Transactions and Transfers
+      summary: Get all transfers, with the option to filter.
+      parameters:
+        - in: query
+          name: account
+          schema:
+            type: string
+            pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum:
+              - deposit
+              - withdrawal
+        - in: query
+          name: userPerforming
+          schema:
+            type: string
+        - in: query
+          name: timestamp
+          schema:
+            type: string
+            format: date-time
+      operationId: getAllTransfers
+      description: Calling this allows you to fetch all transfers. Apply query's to filter results.
+      responses:
+        "200":
+          description: Array of relevant transfers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          description: bad input parameter
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Transactions and Transfers
+      summary: Create a new transfer
+      requestBody:
+        description: Transfer object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Transfer"
+      operationId: createTransfer
+      description: Calling this allows you to create a transfer
+      responses:
+        "200":
+          description: The transfer is made
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "400":
+          description: bad input parameter
+
+  /Transfer/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the transfer to get
+      tags:
+        - Transactions and Transfers
+      summary: Get a transfer by id
+      operationId: getTransferById
+      description: Calling this allows you to fetch a specific transfer by id
+      responses:
+        "200":
+          description: the transfer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
         "400":
           description: bad input parameter
 
@@ -391,7 +508,6 @@ components:
       bearerFormat: JWT
 
   schemas:
-
     # :TODO De 'required' fields nog even doorlopen.
 
     Transaction:
@@ -409,7 +525,7 @@ components:
         accountFrom:
           description: Sending account
           type: string
-          pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/ 
+          pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
           example: NL01INHO0000000001
         accountTo:
           description: Receiving account
@@ -418,7 +534,8 @@ components:
           example: NL01INHO0000000002
         userPerforming:
           description: Id of user performing the transaction
-          $ref: "#/components/schemas/User"
+          type: integer
+          example: 1
         amount:
           description: The amount of money
           type: number
@@ -470,6 +587,40 @@ components:
           format: double
           example: -1000
 
+    Transfer:
+      type: object
+      required:
+        - account
+        - type
+        - amount
+        - userPerforming
+        - timestamp
+      properties:
+        account:
+          description: The unique identifier for the account
+          type: string
+          pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
+          example: NL01INHO0000000001
+        type:
+          description: Transfer type
+          type: string
+          enum: [deposit, withdrawal]
+          example: deposit
+        amount:
+          description: The amount of money
+          type: number
+          format: double
+          example: 10.42
+        userPerforming:
+          description: The user performing the transfer
+          type: integer
+          example: 1
+        timestamp:
+          description: Date and time of the transfer
+          type: string
+          format: date-time
+          example: 01-02-2021 12:06:03
+
     User:
       type: object
       required:
@@ -512,7 +663,7 @@ components:
           description: Users status
           type: string
           enum: [active, inactive]
-          example: sctive
+          example: active
         dayLimit:
           description: The max spending for the user per day
           type: number
