@@ -24,6 +24,9 @@ import javax.validation.constraints.*;
 public class Transfer   {
   @Id
   @GeneratedValue
+  @JsonProperty("id")
+  private Integer id = null;
+
   @JsonProperty("account")
   private String account = null;
 
