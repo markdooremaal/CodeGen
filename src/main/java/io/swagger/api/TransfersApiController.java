@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T11:33:45.087Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
 @RestController
 public class TransfersApiController implements TransfersApi {
 
@@ -53,7 +53,7 @@ public class TransfersApiController implements TransfersApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<Transfer>(objectMapper.readValue("{\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transfer.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<Transfer>(objectMapper.readValue("{\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transfer.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<Transfer>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,7 +68,7 @@ public class TransfersApiController implements TransfersApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<Transfer>(objectMapper.readValue("{\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transfer.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<Transfer>(objectMapper.readValue("{\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transfer.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<Transfer>(HttpStatus.INTERNAL_SERVER_ERROR);

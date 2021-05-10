@@ -14,10 +14,13 @@ import javax.validation.constraints.*;
  * Transfer
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T11:33:45.087Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
 
 
 public class Transfer   {
+  @JsonProperty("id")
+  private Integer id = null;
+
   @JsonProperty("account")
   private String account = null;
 
@@ -62,6 +65,25 @@ public class Transfer   {
 
   @JsonProperty("timestamp")
   private OffsetDateTime timestamp = null;
+
+  public Transfer id(Integer id) {
+    this.id = id;
+    return this;
+  }
+
+  /**
+   * Unique transfer id
+   * @return id
+   **/
+  @Schema(example = "1", description = "Unique transfer id")
+  
+    public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
   public Transfer account(String account) {
     this.account = account;
@@ -152,9 +174,8 @@ public class Transfer   {
    * Date and time of the transfer
    * @return timestamp
    **/
-  @Schema(required = true, description = "Date and time of the transfer")
-      @NotNull
-
+  @Schema(description = "Date and time of the transfer")
+  
     @Valid
     public OffsetDateTime getTimestamp() {
     return timestamp;
@@ -174,7 +195,8 @@ public class Transfer   {
       return false;
     }
     Transfer transfer = (Transfer) o;
-    return Objects.equals(this.account, transfer.account) &&
+    return Objects.equals(this.id, transfer.id) &&
+        Objects.equals(this.account, transfer.account) &&
         Objects.equals(this.type, transfer.type) &&
         Objects.equals(this.amount, transfer.amount) &&
         Objects.equals(this.userPerforming, transfer.userPerforming) &&
@@ -183,7 +205,7 @@ public class Transfer   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(account, type, amount, userPerforming, timestamp);
+    return Objects.hash(id, account, type, amount, userPerforming, timestamp);
   }
 
   @Override
@@ -191,6 +213,7 @@ public class Transfer   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Transfer {\n");
     
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    account: ").append(toIndentedString(account)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    amount: ").append(toIndentedString(amount)).append("\n");
