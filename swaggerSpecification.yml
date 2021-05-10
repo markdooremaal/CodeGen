@@ -594,8 +594,11 @@ components:
         - type
         - amount
         - userPerforming
-        - timestamp
       properties:
+        id:
+          description: Unique transfer id
+          type: integer
+          example: 1
         account:
           description: The unique identifier for the account
           type: string
