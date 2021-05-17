@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.model.enums.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
@@ -43,38 +44,8 @@ public class User   {
   @JsonProperty("role")
   private Role role = null;
 
-  /**
-   * Users status
-   */
-  public enum StatusEnum {
-    ACTIVE("active"),
-    
-    INACTIVE("inactive");
-
-    private String value;
-
-    StatusEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
   @JsonProperty("status")
-  private StatusEnum status = null;
+  private Status status = null;
 
   @JsonProperty("dayLimit")
   private Double dayLimit = null;
@@ -200,7 +171,7 @@ public class User   {
     this.role = role;
   }
 
-  public User status(StatusEnum status) {
+  public User status(Status status) {
     this.status = status;
     return this;
   }
@@ -212,11 +183,11 @@ public class User   {
   @Schema(example = "active", required = true, description = "Users status")
       @NotNull
 
-    public StatusEnum getStatus() {
+    public Status getStatus() {
     return status;
   }
 
-  public void setStatus(StatusEnum status) {
+  public void setStatus(Status status) {
     this.status = status;
   }
 
