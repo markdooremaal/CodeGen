@@ -33,6 +33,18 @@
         </plugins>
     </build>
     <dependencies>
+        <!--Security dependencies-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
         <!--H2 dependencies-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
