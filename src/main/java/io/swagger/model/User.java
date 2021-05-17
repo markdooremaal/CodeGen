@@ -1,5 +1,7 @@
 package io.swagger.model;
 
+import io.swagger.model.enums.Role;
+
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -38,38 +40,8 @@ public class User   {
   @JsonProperty("password")
   private String password = null;
 
-  /**
-   * Users role
-   */
-  public enum RoleEnum {
-    CUSTOMER("customer"),
-    
-    EMPLOYEE("employee");
-
-    private String value;
-
-    RoleEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static RoleEnum fromValue(String text) {
-      for (RoleEnum b : RoleEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
   @JsonProperty("role")
-  private RoleEnum role = null;
+  private Role role = null;
 
   /**
    * Users status
@@ -209,7 +181,7 @@ public class User   {
     this.password = password;
   }
 
-  public User role(RoleEnum role) {
+  public User role(Role role) {
     this.role = role;
     return this;
   }
@@ -220,11 +192,11 @@ public class User   {
    **/
   @Schema(example = "customer", description = "Users role")
   
-    public RoleEnum getRole() {
+  public Role getRole() {
     return role;
   }
 
-  public void setRole(RoleEnum role) {
+  public void setRole(Role role) {
     this.role = role;
   }
 
