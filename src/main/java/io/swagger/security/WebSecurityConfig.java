@@ -31,6 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/h2-console/**/**").permitAll()
+                .antMatchers("/swagger-ui/**/**").permitAll()
                 .anyRequest().authenticated();
 
         //Make sure that the request is filtered before trying to access a location,
