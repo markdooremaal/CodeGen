@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.model.enums.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.threeten.bp.OffsetDateTime;
 import org.springframework.validation.annotation.Validated;
@@ -31,39 +32,8 @@ public class Transfer {
     @JsonProperty("account")
     private String account = null;
 
-    /**
-     * Transfer type
-     */
-    public enum TypeEnum {
-        DEPOSIT("deposit"),
-
-        WITHDRAWAL("withdrawal");
-
-        private String value;
-
-        TypeEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static TypeEnum fromValue(String text) {
-            for (TypeEnum b : TypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-    }
-
     @JsonProperty("type")
-    private TypeEnum type = null;
+    private Type type = null;
 
     @JsonProperty("amount")
     private Double amount = null;
@@ -120,7 +90,7 @@ public class Transfer {
         this.account = account;
     }
 
-    public Transfer type(TypeEnum type) {
+    public Transfer type(Type type) {
         this.type = type;
         return this;
     }
@@ -133,11 +103,11 @@ public class Transfer {
     @Schema(example = "deposit", required = true, description = "Transfer type")
     @NotNull
 
-    public TypeEnum getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(TypeEnum type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
