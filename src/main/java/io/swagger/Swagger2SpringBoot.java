@@ -1,9 +1,11 @@
 package io.swagger;
 
+import io.swagger.model.Transaction;
 import io.swagger.model.User;
 import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
 import io.swagger.security.UserService;
+import io.swagger.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
@@ -20,6 +22,8 @@ public class Swagger2SpringBoot implements CommandLineRunner {
 
     @Autowired
     UserService userService;
+    @Autowired
+    TransactionService transactionService;
 
     @Override
     public void run(String... arg0) throws Exception {
@@ -39,6 +43,13 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         user.setFirstName("Bram");
         user.setTransactionLimit(10.00);
         userService.add(user);
+
+        Transaction transaction = new Transaction();
+        transaction.setAccountFrom("nl58ingb1122832273");
+        transaction.setAccountTo("nl05ingb9732254661");
+        transaction.userPerforming(user.getId());
+        transaction.setAmount(500.00);
+        transactionService.storeTransaction(transaction);
     }
 
     public static void main(String[] args) throws Exception {

@@ -1,10 +1,12 @@
 openapi: 3.0.0
+servers:
+  - url: localhost:8080
 info:
   description: This is the API for the 2.4 Code Generation Bank application
   version: "2.0.1"
   title: Bank API
 paths:
-  /Login:
+  /login:
     post:
       tags:
         - Auth
@@ -42,7 +44,7 @@ paths:
         "400":
           description: bad input parameter
 
-  /Transactions:
+  /transactions:
     get:
       security:
         - bearerAuth: []
@@ -59,12 +61,12 @@ paths:
           name: ibanFrom
           schema:
             type: string
-            pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
+            pattern: ^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$
         - in: query
           name: ibanTo
           schema:
             type: string
-            pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
+            pattern: ^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$
         - in: query
           name: userPerforming
           schema:
@@ -78,7 +80,7 @@ paths:
           name: ibanToOrFrom
           schema:
             type: string
-            pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
+            pattern: ^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$
       operationId: getAllTransactions
       description: Calling this allows you to fetch all transactions. Apply query's to filter results.
       responses:
@@ -115,7 +117,7 @@ paths:
         "400":
           description: bad input parameter
 
-  /Transactions/{id}:
+  /transactions/{id}:
     get:
       security:
         - bearerAuth: []
@@ -141,7 +143,7 @@ paths:
         "400":
           description: bad input parameter
 
-  /Transfers:
+  /transfers:
     get:
       security:
         - bearerAuth: []
@@ -211,7 +213,7 @@ paths:
         "400":
           description: bad input parameter
 
-  /Transfer/{id}:
+  /transfer/{id}:
     get:
       security:
         - bearerAuth: []
@@ -237,7 +239,7 @@ paths:
         "400":
           description: bad input parameter
 
-  /Users:
+  /users:
     get:
       security:
         - bearerAuth: []
@@ -305,7 +307,7 @@ paths:
         "400":
           description: bad input parameter
 
-  /Users/{id}:
+  /users/{id}:
     get:
       security:
         - bearerAuth: []
@@ -382,7 +384,7 @@ paths:
         "400":
           description: bad input parameter
 
-  /BankAccounts:
+  /bankaccounts:
     get:
       security:
         - bearerAuth: []
@@ -431,7 +433,7 @@ paths:
         "400":
           description: bad input parameter
 
-  /BankAccounts/{id}:
+  /bankaccounts/{id}:
     get:
       security:
         - bearerAuth: []
@@ -565,7 +567,7 @@ components:
         iban:
           description: The unique identifier for the account
           type: string
-          pattern: /^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/
+          pattern: ^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$
           example: NL01INHO0000000001
         userId:
           description: Owner of the bank account
