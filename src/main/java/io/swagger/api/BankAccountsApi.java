@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
 @Validated
 public interface BankAccountsApi {
 
@@ -81,7 +81,7 @@ public interface BankAccountsApi {
     @RequestMapping(value = "/BankAccounts",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<BankAccount> getAllAccounts();
+    ResponseEntity<BankAccount> getAllAccounts(@Parameter(in = ParameterIn.QUERY, description = "Get all the accounts for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId);
 
 
     @Operation(summary = "Update a Bank Account by IBAN", description = "Calling this allows you to update a specific Bank Account by id", security = {
@@ -92,8 +92,9 @@ public interface BankAccountsApi {
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
     @RequestMapping(value = "/BankAccounts/{id}",
         produces = { "application/json" }, 
+        consumes = { "application/json" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required=true, schema=@Schema()) @PathVariable("id") String id);
+    ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required=true, schema=@Schema()) @PathVariable("id") String id, @Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body);
 
 }
 

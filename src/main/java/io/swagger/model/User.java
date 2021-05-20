@@ -1,16 +1,11 @@
 package io.swagger.model;
 
-import io.swagger.model.enums.Role;
-
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.model.enums.Status;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -18,12 +13,10 @@ import javax.validation.constraints.*;
  * User
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
 
-@Entity
+
 public class User   {
-  @Id
-  @GeneratedValue
   @JsonProperty("id")
   private Integer id = null;
 
@@ -39,11 +32,71 @@ public class User   {
   @JsonProperty("password")
   private String password = null;
 
-  @JsonProperty("role")
-  private Role role = null;
+  /**
+   * Users role
+   */
+  public enum RoleEnum {
+    CUSTOMER("customer"),
+    
+    EMPLOYEE("employee");
 
+    private String value;
+
+    RoleEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static RoleEnum fromValue(String text) {
+      for (RoleEnum b : RoleEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+  @JsonProperty("role")
+  private RoleEnum role = null;
+
+  /**
+   * Users status
+   */
+  public enum StatusEnum {
+    ACTIVE("active"),
+    
+    INACTIVE("inactive");
+
+    private String value;
+
+    StatusEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static StatusEnum fromValue(String text) {
+      for (StatusEnum b : StatusEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
   @JsonProperty("status")
-  private Status status = null;
+  private StatusEnum status = null;
 
   @JsonProperty("dayLimit")
   private Double dayLimit = null;
@@ -150,7 +203,7 @@ public class User   {
     this.password = password;
   }
 
-  public User role(Role role) {
+  public User role(RoleEnum role) {
     this.role = role;
     return this;
   }
@@ -161,15 +214,15 @@ public class User   {
    **/
   @Schema(example = "customer", description = "Users role")
   
-  public Role getRole() {
+    public RoleEnum getRole() {
     return role;
   }
 
-  public void setRole(Role role) {
+  public void setRole(RoleEnum role) {
     this.role = role;
   }
 
-  public User status(Status status) {
+  public User status(StatusEnum status) {
     this.status = status;
     return this;
   }
@@ -181,11 +234,11 @@ public class User   {
   @Schema(example = "active", required = true, description = "Users status")
       @NotNull
 
-    public Status getStatus() {
+    public StatusEnum getStatus() {
     return status;
   }
 
-  public void setStatus(Status status) {
+  public void setStatus(StatusEnum status) {
     this.status = status;
   }
 
