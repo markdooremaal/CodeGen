@@ -1,9 +1,8 @@
 package io.swagger.model;
 
-import io.swagger.model.enums.Role;
-
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
@@ -18,7 +17,7 @@ import javax.validation.constraints.*;
  * User
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
 
 @Entity
 public class User   {

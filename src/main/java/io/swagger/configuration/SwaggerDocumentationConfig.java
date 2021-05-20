@@ -13,7 +13,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
 @Configuration
 public class SwaggerDocumentationConfig {
 
@@ -35,7 +35,7 @@ public class SwaggerDocumentationConfig {
             .license("")
             .licenseUrl("http://unlicense.org")
             .termsOfServiceUrl("")
-            .version("1.0.0")
+            .version("2.0.1")
             .contact(new Contact("","", ""))
             .build();
     }
@@ -47,7 +47,7 @@ public class SwaggerDocumentationConfig {
                 .title("Bank API")
                 .description("This is the API for the 2.4 Code Generation Bank application")
                 .termsOfService("")
-                .version("1.0.0")
+                .version("2.0.1")
                 .license(new License()
                     .name("")
                     .url("http://unlicense.org"))

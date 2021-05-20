@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
 @RestController
 public class BankAccountsApiController implements BankAccountsApi {
 
@@ -81,7 +81,7 @@ public class BankAccountsApiController implements BankAccountsApi {
         return new ResponseEntity<BankAccount>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<BankAccount> getAllAccounts() {
+    public ResponseEntity<BankAccount> getAllAccounts(@Parameter(in = ParameterIn.QUERY, description = "Get all the accounts for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
@@ -95,7 +95,7 @@ public class BankAccountsApiController implements BankAccountsApi {
         return new ResponseEntity<BankAccount>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required=true, schema=@Schema()) @PathVariable("id") String id) {
+    public ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required=true, schema=@Schema()) @PathVariable("id") String id,@Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
