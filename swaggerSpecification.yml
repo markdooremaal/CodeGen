@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: This is the API for the 2.4 Code Generation Bank application
-  version: "2.0.0"
+  version: "2.0.1"
   title: Bank API
 paths:
   /Login:
@@ -52,7 +52,7 @@ paths:
       parameters:
         - in: query
           name: userId
-          description: Get the transactions for a logged in user
+          description: Get all the transactions for a specific user
           schema:
             type: integer
         - in: query
@@ -151,7 +151,7 @@ paths:
       parameters:
         - in: query
           name: userId
-          description: Get the transfers for a logged in user
+          description: Get all the transfers for a specific user
           schema:
             type: integer      
         - in: query
@@ -238,7 +238,7 @@ paths:
           description: bad input parameter
 
   /Users:
-    get: #TODO: With filter options like first- lastname, IBAN
+    get:
       security:
         - bearerAuth: []
       parameters:
@@ -392,7 +392,7 @@ paths:
       parameters:
         - in: query
           name: userId
-          description: Get the accounts for a logged in user
+          description: Get all the accounts for a specific user
           schema:
             type: integer
       operationId: getAllAccounts
@@ -469,6 +469,13 @@ paths:
       tags:
         - Accounts
       summary: Update a Bank Account by IBAN
+      requestBody:
+        description: BankAccount object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BankAccount"
       operationId: updateAccountById
       description: Calling this allows you to update a specific Bank Account by id
       responses:
@@ -509,7 +516,6 @@ components:
       bearerFormat: JWT
 
   schemas:
-    # :TODO De 'required' fields nog even doorlopen.
 
     Transaction:
       type: object
