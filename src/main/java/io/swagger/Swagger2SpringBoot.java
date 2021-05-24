@@ -50,6 +50,13 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         transaction.userPerforming(user.getId());
         transaction.setAmount(500.00);
         transactionService.storeTransaction(transaction);
+
+        Transaction transaction2 = new Transaction();
+        transaction2.setAccountFrom("nl58ingb1122832273");
+        transaction2.setAccountTo("nl05rabo9732254661");
+        transaction2.userPerforming(user.getId());
+        transaction2.setAmount(420.00);
+        transactionService.storeTransaction(transaction2);
     }
 
     public static void main(String[] args) throws Exception {
