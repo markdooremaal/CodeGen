@@ -32,9 +32,9 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 @Validated
-public interface BankAccountsApi {
+public interface BankaccountsApi {
 
     @Operation(summary = "Closes a Bank Account by IBAN", description = "Calling this allows you to close a specific Bank Account by id", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
@@ -42,7 +42,7 @@ public interface BankAccountsApi {
         @ApiResponse(responseCode = "200", description = "The Bank account will be closed"),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/BankAccounts/{id}",
+    @RequestMapping(value = "/bankaccounts/{id}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> closeAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to close", required=true, schema=@Schema()) @PathVariable("id") String id);
 
@@ -53,7 +53,7 @@ public interface BankAccountsApi {
         @ApiResponse(responseCode = "200", description = "Account created", content = @Content(schema = @Schema(implementation = BankAccount.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/BankAccounts",
+    @RequestMapping(value = "/bankaccounts",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
@@ -66,7 +66,7 @@ public interface BankAccountsApi {
         @ApiResponse(responseCode = "200", description = "the Bank Account", content = @Content(schema = @Schema(implementation = BankAccount.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/BankAccounts/{id}",
+    @RequestMapping(value = "/bankaccounts/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<BankAccount> getAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to get", required=true, schema=@Schema()) @PathVariable("id") String id);
@@ -78,7 +78,7 @@ public interface BankAccountsApi {
         @ApiResponse(responseCode = "200", description = "The Bank Accounts", content = @Content(schema = @Schema(implementation = BankAccount.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/BankAccounts",
+    @RequestMapping(value = "/bankaccounts",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<BankAccount> getAllAccounts(@Parameter(in = ParameterIn.QUERY, description = "Get all the accounts for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId);
@@ -90,7 +90,7 @@ public interface BankAccountsApi {
         @ApiResponse(responseCode = "200", description = "Account updated", content = @Content(schema = @Schema(implementation = BankAccount.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/BankAccounts/{id}",
+    @RequestMapping(value = "/bankaccounts/{id}",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)

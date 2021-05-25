@@ -33,7 +33,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 @Validated
 public interface TransactionsApi {
 
@@ -43,7 +43,7 @@ public interface TransactionsApi {
         @ApiResponse(responseCode = "200", description = "The transaction is made", content = @Content(schema = @Schema(implementation = Transaction.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Transactions",
+    @RequestMapping(value = "/transactions",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
@@ -56,11 +56,10 @@ public interface TransactionsApi {
         @ApiResponse(responseCode = "200", description = "Array of relevant transactions", content = @Content(schema = @Schema(implementation = Transaction.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Transactions",
+    @RequestMapping(value = "/transactions",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Transaction> getAllTransactions(@Parameter(in = ParameterIn.QUERY, description = "Get all the transactions for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp="/^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "ibanFrom", required = false) String ibanFrom, @Pattern(regexp="/^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "ibanTo", required = false) String ibanTo, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp, @Pattern(regexp="/^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "ibanToOrFrom", required = false) String ibanToOrFrom);
-
 
     @Operation(summary = "Get a transaction by id", description = "Calling this allows you to fetch a specific transaction by id", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Transactions and Transfers" })
@@ -68,7 +67,7 @@ public interface TransactionsApi {
         @ApiResponse(responseCode = "200", description = "the transaction", content = @Content(schema = @Schema(implementation = Transaction.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Transactions/{id}",
+    @RequestMapping(value = "/transactions/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Transaction> getTransactionById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transaction to get", required=true, schema=@Schema()) @PathVariable("id") Integer id);

@@ -4,6 +4,8 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.model.enums.Status;
+import io.swagger.model.enums.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,7 +19,7 @@ import javax.validation.constraints.*;
  * BankAccount
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 
 @Entity
 public class BankAccount   {
@@ -29,71 +31,11 @@ public class BankAccount   {
   @JsonProperty("userId")
   private Integer userId = null;
 
-  /**
-   * Status of the account
-   */
-  public enum StatusEnum {
-    OPEN("Open"),
-    
-    CLOSED("Closed");
-
-    private String value;
-
-    StatusEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
   @JsonProperty("status")
-  private StatusEnum status = null;
+  private Status status = null;
 
-  /**
-   * Account type
-   */
-  public enum TypeEnum {
-    REGULAR("regular"),
-    
-    SAVINGS("savings");
-
-    private String value;
-
-    TypeEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TypeEnum fromValue(String text) {
-      for (TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
   @JsonProperty("type")
-  private TypeEnum type = null;
+  private Type type = null;
 
   @JsonProperty("balance")
   private Double balance = null;
@@ -140,7 +82,7 @@ public class BankAccount   {
     this.userId = userId;
   }
 
-  public BankAccount status(StatusEnum status) {
+  public BankAccount status(Status status) {
     this.status = status;
     return this;
   }
@@ -152,15 +94,15 @@ public class BankAccount   {
   @Schema(example = "Open", required = true, description = "Status of the account")
       @NotNull
 
-    public StatusEnum getStatus() {
+    public Status getStatus() {
     return status;
   }
 
-  public void setStatus(StatusEnum status) {
+  public void setStatus(Status status) {
     this.status = status;
   }
 
-  public BankAccount type(TypeEnum type) {
+  public BankAccount type(Type type) {
     this.type = type;
     return this;
   }
@@ -172,11 +114,11 @@ public class BankAccount   {
   @Schema(example = "regular", required = true, description = "Account type")
       @NotNull
 
-    public TypeEnum getType() {
+    public Type getType() {
     return type;
   }
 
-  public void setType(TypeEnum type) {
+  public void setType(Type type) {
     this.type = type;
   }
 

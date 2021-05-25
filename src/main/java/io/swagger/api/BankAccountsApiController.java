@@ -32,18 +32,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 @RestController
-public class BankAccountsApiController implements BankAccountsApi {
+public class BankaccountsApiController implements BankaccountsApi {
 
-    private static final Logger log = LoggerFactory.getLogger(BankAccountsApiController.class);
+    private static final Logger log = LoggerFactory.getLogger(BankaccountsApiController.class);
 
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
-    public BankAccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public BankaccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }

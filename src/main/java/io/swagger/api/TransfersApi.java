@@ -33,7 +33,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 @Validated
 public interface TransfersApi {
 
@@ -43,7 +43,7 @@ public interface TransfersApi {
         @ApiResponse(responseCode = "200", description = "The transfer is made", content = @Content(schema = @Schema(implementation = Transfer.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Transfers",
+    @RequestMapping(value = "/transfers",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
@@ -56,7 +56,7 @@ public interface TransfersApi {
         @ApiResponse(responseCode = "200", description = "Array of relevant transfers", content = @Content(schema = @Schema(implementation = Transfer.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Transfers",
+    @RequestMapping(value = "/transfers",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Transfer> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp="/^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "account", required = false) String account, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "deposit", "withdrawal" }

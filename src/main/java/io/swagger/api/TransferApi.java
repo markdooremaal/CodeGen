@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 @Validated
 public interface TransferApi {
 
@@ -42,7 +42,7 @@ public interface TransferApi {
         @ApiResponse(responseCode = "200", description = "the transfer", content = @Content(schema = @Schema(implementation = Transfer.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Transfer/{id}",
+    @RequestMapping(value = "/transfer/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<Transfer> getTransferById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transfer to get", required=true, schema=@Schema()) @PathVariable("id") Integer id);

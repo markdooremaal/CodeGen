@@ -2,14 +2,17 @@ package io.swagger.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.model.BankAccount;
 import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -17,7 +20,7 @@ import javax.validation.constraints.*;
  * User
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 
 @Entity
 public class User   {
@@ -49,6 +52,11 @@ public class User   {
 
   @JsonProperty("transactionLimit")
   private Double transactionLimit = null;
+
+  @JsonProperty("bankAccounts")
+  @OneToMany(targetEntity=BankAccount.class, mappedBy="iban", fetch= FetchType.EAGER)
+  @Valid
+  private List<BankAccount> bankAccounts = null;
 
   public User id(Integer id) {
     this.id = id;
@@ -160,7 +168,7 @@ public class User   {
    **/
   @Schema(example = "customer", description = "Users role")
   
-  public Role getRole() {
+    public Role getRole() {
     return role;
   }
 
@@ -228,6 +236,33 @@ public class User   {
     this.transactionLimit = transactionLimit;
   }
 
+  public User bankAccounts(List<BankAccount> bankAccounts) {
+    this.bankAccounts = bankAccounts;
+    return this;
+  }
+
+  public User addBankAccountsItem(BankAccount bankAccountsItem) {
+    if (this.bankAccounts == null) {
+      this.bankAccounts = new ArrayList<BankAccount>();
+    }
+    this.bankAccounts.add(bankAccountsItem);
+    return this;
+  }
+
+  /**
+   * The users bank accounts
+   * @return bankAccounts
+   **/
+  @Schema(description = "The users bank accounts")
+      @Valid
+    public List<BankAccount> getBankAccounts() {
+    return bankAccounts;
+  }
+
+  public void setBankAccounts(List<BankAccount> bankAccounts) {
+    this.bankAccounts = bankAccounts;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -246,12 +281,13 @@ public class User   {
         Objects.equals(this.role, user.role) &&
         Objects.equals(this.status, user.status) &&
         Objects.equals(this.dayLimit, user.dayLimit) &&
-        Objects.equals(this.transactionLimit, user.transactionLimit);
+        Objects.equals(this.transactionLimit, user.transactionLimit) &&
+        Objects.equals(this.bankAccounts, user.bankAccounts);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, firstName, lastName, email, password, role, status, dayLimit, transactionLimit);
+    return Objects.hash(id, firstName, lastName, email, password, role, status, dayLimit, transactionLimit, bankAccounts);
   }
 
   @Override
@@ -268,6 +304,7 @@ public class User   {
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    dayLimit: ").append(toIndentedString(dayLimit)).append("\n");
     sb.append("    transactionLimit: ").append(toIndentedString(transactionLimit)).append("\n");
+    sb.append("    bankAccounts: ").append(toIndentedString(bankAccounts)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 @RestController
 public class UsersApiController implements UsersApi {
 
@@ -52,7 +52,7 @@ public class UsersApiController implements UsersApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"bankAccounts\" : [ {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  }, {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  } ],\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,7 +68,7 @@ public class UsersApiController implements UsersApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"bankAccounts\" : [ {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  }, {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  } ],\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,7 +82,7 @@ public class UsersApiController implements UsersApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"bankAccounts\" : [ {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  }, {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  } ],\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -101,7 +101,7 @@ public class UsersApiController implements UsersApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"bankAccounts\" : [ {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  }, {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  } ],\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);

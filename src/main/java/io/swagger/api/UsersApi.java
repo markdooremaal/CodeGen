@@ -32,7 +32,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-20T09:45:24.479Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 @Validated
 public interface UsersApi {
 
@@ -42,7 +42,7 @@ public interface UsersApi {
         @ApiResponse(responseCode = "200", description = "User created", content = @Content(schema = @Schema(implementation = User.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Users",
+    @RequestMapping(value = "/users",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
@@ -55,7 +55,7 @@ public interface UsersApi {
         @ApiResponse(responseCode = "200", description = "The users", content = @Content(schema = @Schema(implementation = User.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Users",
+    @RequestMapping(value = "/users",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<User> getAllUsers(@Parameter(in = ParameterIn.QUERY, description = "first-/lastname or both" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "email", required = false) String email, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "Customer", "Employee" }
@@ -69,7 +69,7 @@ public interface UsersApi {
         @ApiResponse(responseCode = "200", description = "the user", content = @Content(schema = @Schema(implementation = User.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Users/{id}",
+    @RequestMapping(value = "/users/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<User> getUserById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to get", required=true, schema=@Schema()) @PathVariable("id") Integer id);
@@ -81,7 +81,7 @@ public interface UsersApi {
         @ApiResponse(responseCode = "200", description = "User is now inactive"),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Users/{id}",
+    @RequestMapping(value = "/users/{id}",
         method = RequestMethod.DELETE)
     ResponseEntity<Void> makeUserInactive(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to make inactive", required=true, schema=@Schema()) @PathVariable("id") Integer id);
 
@@ -92,7 +92,7 @@ public interface UsersApi {
         @ApiResponse(responseCode = "200", description = "User updated", content = @Content(schema = @Schema(implementation = User.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Users/{id}",
+    @RequestMapping(value = "/users/{id}",
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.PUT)

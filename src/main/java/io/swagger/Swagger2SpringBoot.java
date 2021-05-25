@@ -1,9 +1,11 @@
 package io.swagger;
 
+import io.swagger.model.BankAccount;
 import io.swagger.model.Transaction;
 import io.swagger.model.User;
 import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
+import io.swagger.model.enums.Type;
 import io.swagger.security.UserService;
 import io.swagger.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,12 @@ public class Swagger2SpringBoot implements CommandLineRunner {
 
         System.out.println("Running MyAppRunner");
 
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setIban("test");
+        bankAccount.setBalance(0.0);
+        bankAccount.setStatus(Status.ACTIVE);
+        bankAccount.setType(Type.DEPOSIT); //@TODO: Proper type
+
         User user = new User();
         user.setEmail("bram@bramsierhuis.nl");
         user.setPassword(("test"));
@@ -42,6 +50,7 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         user.setLastName("Sierhuis");
         user.setFirstName("Bram");
         user.setTransactionLimit(10.00);
+        user.addBankAccountsItem(bankAccount);
         userService.add(user);
 
         Transaction transaction = new Transaction();
