@@ -686,3 +686,8 @@ components:
           type: number
           format: double
           example: 499.90
+        bankAccounts:
+          description: The users bank accounts
+          type: array
+          items:
+            $ref: "#/components/schemas/BankAccount"
