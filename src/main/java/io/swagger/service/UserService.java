@@ -40,6 +40,16 @@ public class UserService
         return userRepository.findById(id);
     }
 
+    //Get a user by email
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+    //Get a user from a token
+    public User findByToken(String token){
+        return userRepository.findByEmail(jwtTokenProvider.getUsername(token));
+    }
+
     //Get delete user by id
     public void delete(int id){
         userRepository.deleteById(id);
