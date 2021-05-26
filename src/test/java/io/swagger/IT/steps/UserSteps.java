@@ -30,10 +30,8 @@ public class UserSteps {
     public void ikAlleUsersOphaal() throws URISyntaxException {
         URI uri = new URI(baseUrl + "users");
         headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
-        System.out.println(headers.toString());
 
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        //responseEntity = template.getForEntity(uri, entity, String.class);
         responseEntity = template.exchange(uri, HttpMethod.GET, entity, String.class);
     }
 

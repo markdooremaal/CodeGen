@@ -3,6 +3,8 @@ package io.swagger.api;
 import io.swagger.model.ArrayOfUsers;
 import io.swagger.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.security.JwtTokenProvider;
+import io.swagger.security.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +39,12 @@ import java.util.Map;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @RestController
 public class UsersApiController implements UsersApi {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
 
@@ -67,13 +76,10 @@ public class UsersApiController implements UsersApi {
 )) @Valid @RequestParam(value = "role", required = false) String role,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "Active", "Inactive" }
 )) @Valid @RequestParam(value = "status", required = false) String status) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ArrayOfUsers>(objectMapper.readValue("[ {\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"bankAccounts\" : [ {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  }, {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  } ],\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}, {\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"bankAccounts\" : [ {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  }, {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  } ],\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n} ]", ArrayOfUsers.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ArrayOfUsers>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
+            ArrayOfUsers users = userService.findAll();
+
+            return new ResponseEntity<ArrayOfUsers>(users, HttpStatus.OK);
         }
 
         return new ResponseEntity<ArrayOfUsers>(HttpStatus.NOT_IMPLEMENTED);

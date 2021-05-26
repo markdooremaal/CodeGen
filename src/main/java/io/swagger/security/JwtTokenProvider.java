@@ -71,6 +71,12 @@ public class JwtTokenProvider {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
+    //Get the role of an access token
+    public Role getRole(String token){
+        Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        return Role.fromValue(claims.get("auth").toString());
+    }
+
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
@@ -81,11 +87,9 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            System.out.println("JwtTokenProvider(): " + token);
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            System.out.println(e);
             throw new ResponseStatusException( HttpStatus.INTERNAL_SERVER_ERROR, "Expired or invalid JWT token");
         }
     }

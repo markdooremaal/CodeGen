@@ -33,8 +33,6 @@ public class Swagger2SpringBoot implements CommandLineRunner {
             throw new ExitException();
         }
 
-        System.out.println("Running MyAppRunner");
-
         BankAccount bankAccount = new BankAccount();
         bankAccount.setIban("test");
         bankAccount.setBalance(0.0);

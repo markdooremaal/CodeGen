@@ -2,6 +2,7 @@ package io.swagger.api;
 
 import io.swagger.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.security.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +37,9 @@ import java.util.Map;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @RestController
 public class UserApiController implements UserApi {
+
+    @Autowired
+    private UserService userService;
 
     private static final Logger log = LoggerFactory.getLogger(UserApiController.class);
 
@@ -64,6 +69,7 @@ public class UserApiController implements UserApi {
 
     public ResponseEntity<Void> makeUserInactive(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to make inactive", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
+        userService.makeInactive(id);
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 

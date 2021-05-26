@@ -1,6 +1,8 @@
 package io.swagger.security;
 
+import io.swagger.model.ArrayOfUsers;
 import io.swagger.model.User;
+import io.swagger.model.enums.Status;
 import io.swagger.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,32 @@ public class UserService
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    //Get all users
+    public ArrayOfUsers findAll(){
+        return userRepository.findAll();
+    }
+
+    //Get a user by id
+    public User findById(int id){
+        return userRepository.findById(id);
+    }
+
+    //Get delete user by id
+    public void delete(int id){
+        userRepository.deleteById(id);
+    }
+
+    //Update a user
+    public void update(User user){
+        userRepository.save(user);
+    }
+
+    public void makeInactive(int id){
+        User user = findById(id);
+        user.setStatus(Status.INACTIVE);
+        update(user);
+    }
 
     //Login the user
     public String login(String email, String password){
