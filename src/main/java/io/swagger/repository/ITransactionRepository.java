@@ -1,15 +1,18 @@
 package io.swagger.repository;
 
+import io.swagger.model.ArrayOfTransactions;
 import io.swagger.model.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface ITransactionRepository extends JpaRepository<Transaction, Integer> {
-    List<Transaction> findByAccountFromLike(String accountFrom);
+    ArrayOfTransactions findAll();
 
-    List<Transaction> findByAccountToLike(String accountTo);
+    ArrayOfTransactions findByAccountFromLike(String accountFrom);
 
-    List<Transaction> findByAccountFromLikeAndAccountToLike(String accountFrom, String accountTo);
+    ArrayOfTransactions findByAccountToLike(String accountTo);
+
+    ArrayOfTransactions findByAccountFromLikeAndAccountToLike(String accountFrom, String accountTo);
 
 }

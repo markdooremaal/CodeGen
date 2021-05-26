@@ -1,5 +1,6 @@
 package io.swagger.service;
 
+import io.swagger.model.ArrayOfTransactions;
 import io.swagger.model.Transaction;
 import io.swagger.repository.ITransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class TransactionService {
     @Autowired
     private ITransactionRepository transactionRepository;
 
-    public List<Transaction> getAllTransactions() {
+    public ArrayOfTransactions getAllTransactions() {
         return transactionRepository.findAll();
     }
 
@@ -29,15 +30,15 @@ public class TransactionService {
         return transactionRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 
-    public List<Transaction> getTransactionByFrom(String accountFrom) {
+    public ArrayOfTransactions getTransactionByFrom(String accountFrom) {
         return transactionRepository.findByAccountFromLike(accountFrom);
     }
 
-    public List<Transaction> getTransactionByTo(String accountTo) {
+    public ArrayOfTransactions getTransactionByTo(String accountTo) {
         return transactionRepository.findByAccountToLike(accountTo);
     }
 
-    public List<Transaction> getTransactionByFromAndTo(String accountFrom, String accountTo) {
+    public ArrayOfTransactions getTransactionByFromAndTo(String accountFrom, String accountTo) {
         return transactionRepository.findByAccountFromLikeAndAccountToLike(accountFrom, accountTo);
     }
 

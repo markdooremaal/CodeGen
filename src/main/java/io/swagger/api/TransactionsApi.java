@@ -39,28 +39,28 @@ import java.util.Map;
 public interface TransactionsApi {
 
     @Operation(summary = "Create a new transaction", description = "Calling this allows you to create a transaction", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Transactions and Transfers" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "The transaction is made", content = @Content(schema = @Schema(implementation = Transaction.class))),
-        
-        @ApiResponse(responseCode = "400", description = "bad input parameter") })
+            @SecurityRequirement(name = "bearerAuth")}, tags = {"Transactions and Transfers"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The transaction is made", content = @Content(schema = @Schema(implementation = Transaction.class))),
+
+            @ApiResponse(responseCode = "400", description = "bad input parameter")})
     @RequestMapping(value = "/transactions",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<Transaction> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required=true, schema=@Schema()) @Valid @RequestBody Transaction body);
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<Transaction> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required = true, schema = @Schema()) @Valid @RequestBody Transaction body);
 
 
     @Operation(summary = "Get all Transactions, with the option to filter.", description = "Calling this allows you to fetch all transactions. Apply query's to filter results.", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Transactions and Transfers" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Array of relevant transactions", content = @Content(schema = @Schema(implementation = ArrayOfTransactions.class))),
-        
-        @ApiResponse(responseCode = "400", description = "bad input parameter") })
+            @SecurityRequirement(name = "bearerAuth")}, tags = {"Transactions and Transfers"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Array of relevant transactions", content = @Content(schema = @Schema(implementation = ArrayOfTransactions.class))),
+
+            @ApiResponse(responseCode = "400", description = "bad input parameter")})
     @RequestMapping(value = "/transactions",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<ArrayOfTransactions> getAllTransactions(@Parameter(in = ParameterIn.QUERY, description = "Get all the transactions for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp="^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "ibanFrom", required = false) String ibanFrom, @Pattern(regexp="^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "ibanTo", required = false) String ibanTo, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp, @Pattern(regexp="^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "ibanToOrFrom", required = false) String ibanToOrFrom);
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<ArrayOfTransactions> getAllTransactions(@RequestParam Map<String, String> params);
 
 }
 
