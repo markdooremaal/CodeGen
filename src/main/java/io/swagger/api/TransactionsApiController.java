@@ -1,9 +1,13 @@
 package io.swagger.api;
 
 import io.swagger.model.ArrayOfTransactions;
+import io.swagger.model.BankAccount;
 import io.swagger.model.User;
 import io.swagger.model.enums.Role;
+import io.swagger.security.JwtTokenFilter;
+import io.swagger.security.JwtTokenProvider;
 import io.swagger.service.TransactionService;
+import io.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.threeten.bp.OffsetDateTime;
 import io.swagger.model.Transaction;
@@ -52,6 +56,10 @@ public class TransactionsApiController implements TransactionsApi {
 
     @Autowired
     private TransactionService transactionService;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+    @Autowired
+    private UserService userService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -87,12 +95,15 @@ public class TransactionsApiController implements TransactionsApi {
 
     public ResponseEntity<ArrayOfTransactions> getAllTransactions(@RequestParam Map<String, String> params) {
         ArrayOfTransactions transactions = new ArrayOfTransactions();
-        User user = new User(); // :TODO Should be based on JWT.
-        user.setRole(Role.EMPLOYEE);
+        Role role = tokenProvider.getRole(tokenProvider.resolveToken(request));
 
-        if (user.getRole() == Role.EMPLOYEE) {
+        if (role == Role.EMPLOYEE) {
             transactions = transactionService.getAllTransactions();
-        } else if (user.getRole() == Role.CUSTOMER) {
+        } else if (role == Role.CUSTOMER) {
+            User user = userService.findByToken(tokenProvider.resolveToken(request));
+
+            List<BankAccount> bankAccounts = user.getBankAccounts();
+
             transactions = transactionService.getAllTransactions();
             // Maybe use ibanFromOrTo
             // Get all ibans for specific user
@@ -126,7 +137,7 @@ public class TransactionsApiController implements TransactionsApi {
          * Only show transactions where the IBAN-From or IBAN-To matches query
          * Only available if user is an employee
          */
-        if (params.containsKey("ibanToOrFrom") && user.getRole() == Role.EMPLOYEE) {
+        if (params.containsKey("ibanToOrFrom") && role == Role.EMPLOYEE) {
             transactions = transactions.stream().filter(
                     t -> params.get("ibanToOrFrom").equals(t.getAccountFrom())
                             || params.get("ibanToOrFrom").equals(t.getAccountTo())).collect(Collectors.toCollection(ArrayOfTransactions::new));
@@ -136,7 +147,7 @@ public class TransactionsApiController implements TransactionsApi {
          * Filter based on the user performing the transaction
          * Only available if user is an employee
          */
-        if (params.containsKey("userPerforming") && user.getRole() == Role.EMPLOYEE) {
+        if (params.containsKey("userPerforming") && role == Role.EMPLOYEE) {
             Integer userPerforming = Integer.parseInt(params.get("userPerforming"));
             transactions = transactions.stream().filter(
                     t -> userPerforming.equals(t.getUserPerforming())).collect(Collectors.toCollection(ArrayOfTransactions::new));
