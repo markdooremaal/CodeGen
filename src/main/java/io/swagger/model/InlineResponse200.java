@@ -10,6 +10,7 @@ import javax.validation.constraints.*;
 
 /**
  * InlineResponse200
+ * Token is modified from byte array to string
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
@@ -17,9 +18,9 @@ import javax.validation.constraints.*;
 
 public class InlineResponse200   {
   @JsonProperty("token")
-  private byte[] token = null;
+  private String token = null;
 
-  public InlineResponse200 token(byte[] token) {
+  public InlineResponse200 token(String token) {
     this.token = token;
     return this;
   }
@@ -30,11 +31,11 @@ public class InlineResponse200   {
    **/
   @Schema(description = "")
   
-    public byte[] getToken() {
+    public String getToken() {
     return token;
   }
 
-  public void setToken(byte[] token) {
+  public void setToken(String token) {
     this.token = token;
   }
 
