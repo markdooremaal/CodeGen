@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +33,7 @@ public class UsersApiController implements UsersApi {
     private JwtTokenProvider jwtTokenProvider;
 
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
-
     private final ObjectMapper objectMapper;
-
     private final HttpServletRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -43,31 +42,35 @@ public class UsersApiController implements UsersApi {
         this.request = request;
     }
 
+    //region createUser
     public ResponseEntity<User> createUser(@Parameter(in = ParameterIn.DEFAULT, description = "User object", required=true, schema=@Schema()) @Valid @RequestBody User body) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"firstName\" : \"John\",\n  \"lastName\" : \"Doe\",\n  \"password\" : \"goedWachtwoord94!\",\n  \"role\" : \"customer\",\n  \"dayLimit\" : 499.9,\n  \"bankAccounts\" : [ {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  }, {\n    \"balance\" : 500.5,\n    \"absoluteLimit\" : -1000,\n    \"iban\" : \"NL01INHO0000000001\",\n    \"type\" : \"regular\",\n    \"userId\" : 1,\n    \"status\" : \"Open\"\n  } ],\n  \"id\" : 1,\n  \"transactionLimit\" : 499.9,\n  \"email\" : \"johndoe@example.dev\",\n  \"status\" : \"active\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (accept != null && (accept.contains("application/json")) || accept.contains("*/*")) {
+            try{
+                User addedUser = userService.add(body); //@TODO: error checking
+                return new ResponseEntity<User>(addedUser, HttpStatus.CREATED);
+            } catch (ResponseStatusException responseStatusException){
+                return new ResponseEntity<User>(HttpStatus.CONFLICT);
             }
+        } else{
+            return new ResponseEntity<User>(HttpStatus.NOT_ACCEPTABLE);
         }
-
-        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
+    //endregion
 
+    //region getAllUsers | Optional filters
     public ResponseEntity<ArrayOfUsers> getAllUsers(@Parameter(in = ParameterIn.QUERY, description = "first-/lastname or both" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "email", required = false) String email,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "Customer", "Employee" }
 )) @Valid @RequestParam(value = "role", required = false) String role,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "Active", "Inactive" }
 )) @Valid @RequestParam(value = "status", required = false) String status) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
-            ArrayOfUsers users = userService.findAll();
+            ArrayOfUsers users = userService.findAll(); //@TODO: Filters
 
             return new ResponseEntity<ArrayOfUsers>(users, HttpStatus.OK);
         }
 
         return new ResponseEntity<ArrayOfUsers>(HttpStatus.NOT_IMPLEMENTED);
     }
+    //endregion
 
 }

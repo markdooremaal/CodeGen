@@ -58,7 +58,6 @@ public interface UserApi {
         method = RequestMethod.DELETE)
     ResponseEntity<Void> makeUserInactive(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to make inactive", required=true, schema=@Schema()) @PathVariable("id") Integer id);
 
-
     @Operation(summary = "Update a user", description = "Calling this allows you to update a user", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Users" })
     @ApiResponses(value = { 

@@ -185,8 +185,7 @@ public class User   {
    * Users status
    * @return status
    **/
-  @Schema(example = "active", required = true, description = "Users status")
-      @NotNull
+  @Schema(example = "active", description = "Users status")
 
     public Status getStatus() {
     return status;
@@ -205,8 +204,7 @@ public class User   {
    * The max spending for the user per day
    * @return dayLimit
    **/
-  @Schema(example = "499.9", required = true, description = "The max spending for the user per day")
-      @NotNull
+  @Schema(example = "499.9", description = "The max spending for the user per day")
 
     public Double getDayLimit() {
     return dayLimit;
@@ -225,8 +223,7 @@ public class User   {
    * The max spending for the user
    * @return transactionLimit
    **/
-  @Schema(example = "499.9", required = true, description = "The max spending for the user")
-      @NotNull
+  @Schema(example = "499.9", description = "The max spending for the user")
 
     public Double getTransactionLimit() {
     return transactionLimit;

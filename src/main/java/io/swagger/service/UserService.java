@@ -2,6 +2,7 @@ package io.swagger.service;
 
 import io.swagger.model.ArrayOfUsers;
 import io.swagger.model.User;
+import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
 import io.swagger.repository.IUserRepository;
 import io.swagger.security.JwtTokenProvider;
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,6 +18,11 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class UserService
 {
+    private final Role ROLE = Role.CUSTOMER;
+    private final Status STATUS = Status.ACTIVE;
+    private final Double DAY_LIMIT = 5000.00;
+    private final Double TRANSACTION_LIMIT = 2500.00;
+
     @Autowired
     private IUserRepository userRepository;
 
@@ -83,6 +88,19 @@ public class UserService
     public User add(User user){
         if(userRepository.findByEmail(user.getEmail()) == null) {
             user.setPassword(passwordEncoder.encode(user.getPassword())); //TODO: Implement salt
+
+            if(user.getRole() == null)
+                user.setRole(ROLE);
+
+            if(user.getStatus() == null)
+                user.setStatus(STATUS);
+
+            if(user.getDayLimit() == null)
+                user.setDayLimit(DAY_LIMIT);
+
+            if(user.getTransactionLimit() == null)
+                user.setTransactionLimit(TRANSACTION_LIMIT);
+
             userRepository.save(user);
             return user;
         }

@@ -38,6 +38,7 @@ public class UserApiController implements UserApi {
         this.request = request;
     }
 
+    //region getUserById(int id)
     public ResponseEntity<User> getUserById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to get", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
@@ -47,13 +48,17 @@ public class UserApiController implements UserApi {
 
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
+    //endregion
 
+    //region makeUserInactive(int id)
     public ResponseEntity<Void> makeUserInactive(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to make inactive", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         userService.makeInactive(id); //@TODO: correct response
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
+    //endregion
 
+    //region updateUser(int id, User user)
     public ResponseEntity<User> updateUser(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to update", required=true, schema=@Schema()) @PathVariable("id") Integer id,@Parameter(in = ParameterIn.DEFAULT, description = "User object", required=true, schema=@Schema()) @Valid @RequestBody User body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -67,5 +72,5 @@ public class UserApiController implements UserApi {
 
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
-
+    //endregion
 }
