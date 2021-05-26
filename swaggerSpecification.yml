@@ -47,7 +47,7 @@ paths:
   /transactions:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Transactions and Transfers
       summary: Get all Transactions, with the option to filter.
@@ -89,12 +89,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Transaction"
+                $ref: "#/components/schemas/ArrayOfTransactions"
         "400":
           description: bad input parameter
     post:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Transactions and Transfers
       summary: Create a new transaction
@@ -117,10 +117,10 @@ paths:
         "400":
           description: bad input parameter
 
-  /transactions/{id}:
+  /transaction/{id}:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: path
           name: id
@@ -146,7 +146,7 @@ paths:
   /transfers:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Transactions and Transfers
       summary: Get all transfers, with the option to filter.
@@ -155,7 +155,7 @@ paths:
           name: userId
           description: Get all the transfers for a specific user
           schema:
-            type: integer      
+            type: integer
         - in: query
           name: account
           schema:
@@ -185,12 +185,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Transfer"
+                $ref: "#/components/schemas/ArrayOfTransfers"
         "400":
           description: bad input parameter
     post:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Transactions and Transfers
       summary: Create a new transfer
@@ -216,7 +216,7 @@ paths:
   /transfer/{id}:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: path
           name: id
@@ -242,7 +242,7 @@ paths:
   /users:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: query
           name: name
@@ -279,12 +279,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/ArrayOfUsers"
         "400":
           description: bad input parameter
     post:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Users
       summary: Create new user
@@ -307,10 +307,10 @@ paths:
         "400":
           description: bad input parameter
 
-  /users/{id}:
+  /user/{id}:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: path
           name: id
@@ -334,7 +334,7 @@ paths:
           description: bad input parameter
     put:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: path
           name: id
@@ -365,7 +365,7 @@ paths:
           description: bad input parameter
     delete:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: path
           name: id
@@ -387,7 +387,7 @@ paths:
   /bankaccounts:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Accounts
       summary: Get all Bank Accounts
@@ -405,12 +405,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BankAccount"
+                $ref: "#/components/schemas/ArrayOfBankAccounts"
         "400":
           description: bad input parameter
     post:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Accounts
       summary: Create a new BankAccount
@@ -433,10 +433,10 @@ paths:
         "400":
           description: bad input parameter
 
-  /bankaccounts/{id}:
+  /bankaccount/{id}:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: path
           name: id
@@ -460,7 +460,7 @@ paths:
           description: bad input parameter
     put:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: path
           name: id
@@ -491,7 +491,7 @@ paths:
           description: bad input parameter
     delete:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       parameters:
         - in: path
           name: id
@@ -583,7 +583,7 @@ components:
         type:
           description: Account type
           type: string
-          enum: [regular, savings]
+          enum: [ regular, savings ]
           example: regular
         balance:
           description: The ammount of money on the account
@@ -616,7 +616,7 @@ components:
         type:
           description: Transfer type
           type: string
-          enum: [deposit, withdrawal]
+          enum: [ deposit, withdrawal ]
           example: deposit
         amount:
           description: The amount of money
@@ -669,12 +669,12 @@ components:
         role:
           description: Users role
           type: string
-          enum: [customer, employee]
+          enum: [ customer, employee ]
           example: customer
         status:
           description: Users status
           type: string
-          enum: [active, inactive]
+          enum: [ active, inactive ]
           example: active
         dayLimit:
           description: The max spending for the user per day
@@ -691,3 +691,25 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/BankAccount"
+
+    ArrayOfTransactions:
+      type: array
+      items:
+        $ref: "#/components/schemas/Transaction"
+
+    ArrayOfBankAccounts:
+      type: array
+      items:
+        $ref: "#/components/schemas/BankAccount"
+
+    ArrayOfTransfers:
+      type: array
+      items:
+        $ref: "#/components/schemas/Transfer"
+
+    ArrayOfUsers:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+
+
