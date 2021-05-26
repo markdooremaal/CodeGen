@@ -2,6 +2,7 @@ package io.swagger.api;
 
 import io.swagger.model.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,20 +44,28 @@ public class TransactionApiController implements TransactionApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    TransactionService transactionService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
+    /**
+     * Display the specified transaction.
+     * :TODO Check if role == employee else user needs to be sender or receiver.
+     */
     public ResponseEntity<Transaction> getTransactionById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transaction to get", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<Transaction>(objectMapper.readValue("{\n  \"accountTo\" : \"NL01INHO0000000002\",\n  \"amount\" : 13.37,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"accountFrom\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transaction.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
+                Transaction transaction = transactionService.getTransactionById(id);
+                return ResponseEntity.status(200).body(transaction);
+            } catch (Exception e) {
+                log.error("Could not find transaction", e);
+                return new ResponseEntity<Transaction>(HttpStatus.NOT_FOUND);
             }
         }
 
