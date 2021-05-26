@@ -1,6 +1,5 @@
 package io.swagger.api;
 
-import io.swagger.model.ArrayOfBankAccounts;
 import io.swagger.model.BankAccount;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,21 +34,26 @@ import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @RestController
-public class BankaccountsApiController implements BankaccountsApi {
+public class BankaccountApiController implements BankaccountApi {
 
-    private static final Logger log = LoggerFactory.getLogger(BankaccountsApiController.class);
+    private static final Logger log = LoggerFactory.getLogger(BankaccountApiController.class);
 
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
-    public BankaccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public BankaccountApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
-    public ResponseEntity<BankAccount> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body) {
+    public ResponseEntity<Void> closeAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to close", required=true, schema=@Schema()) @PathVariable("id") String id) {
+        String accept = request.getHeader("Accept");
+        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public ResponseEntity<BankAccount> getAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to get", required=true, schema=@Schema()) @PathVariable("id") String id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
@@ -63,18 +67,18 @@ public class BankaccountsApiController implements BankaccountsApi {
         return new ResponseEntity<BankAccount>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<ArrayOfBankAccounts> getAllAccounts(@Parameter(in = ParameterIn.QUERY, description = "Get all the accounts for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId) {
+    public ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required=true, schema=@Schema()) @PathVariable("id") String id,@Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<ArrayOfBankAccounts>(objectMapper.readValue("[ {\n  \"balance\" : 500.5,\n  \"absoluteLimit\" : -1000,\n  \"iban\" : \"NL01INHO0000000001\",\n  \"type\" : \"regular\",\n  \"userId\" : 1,\n  \"status\" : \"Open\"\n}, {\n  \"balance\" : 500.5,\n  \"absoluteLimit\" : -1000,\n  \"iban\" : \"NL01INHO0000000001\",\n  \"type\" : \"regular\",\n  \"userId\" : 1,\n  \"status\" : \"Open\"\n} ]", ArrayOfBankAccounts.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<BankAccount>(objectMapper.readValue("{\n  \"balance\" : 500.5,\n  \"absoluteLimit\" : -1000,\n  \"iban\" : \"NL01INHO0000000001\",\n  \"type\" : \"regular\",\n  \"userId\" : 1,\n  \"status\" : \"Open\"\n}", BankAccount.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ArrayOfBankAccounts>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<BankAccount>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<ArrayOfBankAccounts>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<BankAccount>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

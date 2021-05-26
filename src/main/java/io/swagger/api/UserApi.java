@@ -5,7 +5,6 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.ArrayOfUsers;
 import io.swagger.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,33 +34,42 @@ import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @Validated
-public interface UsersApi {
+public interface UserApi {
 
-    @Operation(summary = "Create new user", description = "Calling this allows you to create a new user", security = {
+    @Operation(summary = "Get a user by id", description = "Calling this allows you to fetch a specific user by id", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Users" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "User created", content = @Content(schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "200", description = "the user", content = @Content(schema = @Schema(implementation = User.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/users",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<User> createUser(@Parameter(in = ParameterIn.DEFAULT, description = "User object", required=true, schema=@Schema()) @Valid @RequestBody User body);
-
-
-    @Operation(summary = "Get all Users, with the option to filter.", description = "Calling this allows you to fetch all users. Apply query's to filter results.", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Users" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "The users", content = @Content(schema = @Schema(implementation = ArrayOfUsers.class))),
-        
-        @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/users",
+    @RequestMapping(value = "/user/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<ArrayOfUsers> getAllUsers(@Parameter(in = ParameterIn.QUERY, description = "first-/lastname or both" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "email", required = false) String email, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "Customer", "Employee" }
-)) @Valid @RequestParam(value = "role", required = false) String role, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "Active", "Inactive" }
-)) @Valid @RequestParam(value = "status", required = false) String status);
+    ResponseEntity<User> getUserById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to get", required=true, schema=@Schema()) @PathVariable("id") Integer id);
+
+
+    @Operation(summary = "Makes a user inactive", description = "Calling this allows you to make a user inactive", security = {
+        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Users" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "User is now inactive"),
+        
+        @ApiResponse(responseCode = "400", description = "bad input parameter") })
+    @RequestMapping(value = "/user/{id}",
+        method = RequestMethod.DELETE)
+    ResponseEntity<Void> makeUserInactive(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to make inactive", required=true, schema=@Schema()) @PathVariable("id") Integer id);
+
+
+    @Operation(summary = "Update a user", description = "Calling this allows you to update a user", security = {
+        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Users" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "User updated", content = @Content(schema = @Schema(implementation = User.class))),
+        
+        @ApiResponse(responseCode = "400", description = "bad input parameter") })
+    @RequestMapping(value = "/user/{id}",
+        produces = { "application/json" }, 
+        consumes = { "application/json" }, 
+        method = RequestMethod.PUT)
+    ResponseEntity<User> updateUser(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the user to update", required=true, schema=@Schema()) @PathVariable("id") Integer id, @Parameter(in = ParameterIn.DEFAULT, description = "User object", required=true, schema=@Schema()) @Valid @RequestBody User body);
 
 }
 

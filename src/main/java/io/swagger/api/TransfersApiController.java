@@ -1,5 +1,6 @@
 package io.swagger.api;
 
+import io.swagger.model.ArrayOfTransfers;
 import org.threeten.bp.OffsetDateTime;
 import io.swagger.model.Transfer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +34,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @RestController
 public class TransfersApiController implements TransfersApi {
 
@@ -63,19 +64,19 @@ public class TransfersApiController implements TransfersApi {
         return new ResponseEntity<Transfer>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Transfer> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId,@Pattern(regexp="/^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "account", required = false) String account,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "deposit", "withdrawal" }
+    public ResponseEntity<ArrayOfTransfers> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId,@Pattern(regexp="^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "account", required = false) String account,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "deposit", "withdrawal" }
 )) @Valid @RequestParam(value = "type", required = false) String type,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<Transfer>(objectMapper.readValue("{\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transfer.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<ArrayOfTransfers>(objectMapper.readValue("[ {\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}, {\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n} ]", ArrayOfTransfers.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Transfer>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<ArrayOfTransfers>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<Transfer>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<ArrayOfTransfers>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

@@ -5,6 +5,7 @@
  */
 package io.swagger.api;
 
+import io.swagger.model.ArrayOfTransfers;
 import org.threeten.bp.OffsetDateTime;
 import io.swagger.model.Transfer;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +34,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @Validated
 public interface TransfersApi {
 
@@ -53,13 +54,13 @@ public interface TransfersApi {
     @Operation(summary = "Get all transfers, with the option to filter.", description = "Calling this allows you to fetch all transfers. Apply query's to filter results.", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Transactions and Transfers" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Array of relevant transfers", content = @Content(schema = @Schema(implementation = Transfer.class))),
+        @ApiResponse(responseCode = "200", description = "Array of relevant transfers", content = @Content(schema = @Schema(implementation = ArrayOfTransfers.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
     @RequestMapping(value = "/transfers",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Transfer> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp="/^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}$/") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "account", required = false) String account, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "deposit", "withdrawal" }
+    ResponseEntity<ArrayOfTransfers> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp="^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "account", required = false) String account, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "deposit", "withdrawal" }
 )) @Valid @RequestParam(value = "type", required = false) String type, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming, @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp);
 
 }

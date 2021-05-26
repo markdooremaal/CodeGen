@@ -5,6 +5,7 @@
  */
 package io.swagger.api;
 
+import io.swagger.model.Transaction;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -31,19 +32,20 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @Validated
-public interface LogoutApi {
+public interface TransactionApi {
 
-    @Operation(summary = "Logs the user out", description = "Unset the token, which in term, logs the user out.", security = {
-        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Auth" })
+    @Operation(summary = "Get a transaction by id", description = "Calling this allows you to fetch a specific transaction by id", security = {
+        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Transactions and Transfers" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "The user is logged out."),
+        @ApiResponse(responseCode = "200", description = "the transaction", content = @Content(schema = @Schema(implementation = Transaction.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/Logout",
+    @RequestMapping(value = "/transaction/{id}",
+        produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Void> logout();
+    ResponseEntity<Transaction> getTransactionById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transaction to get", required=true, schema=@Schema()) @PathVariable("id") Integer id);
 
 }
 

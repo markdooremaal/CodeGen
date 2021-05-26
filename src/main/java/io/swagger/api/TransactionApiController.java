@@ -1,5 +1,6 @@
 package io.swagger.api;
 
+import io.swagger.model.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,25 +32,34 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-10T12:34:22.652Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @RestController
-public class LogoutApiController implements LogoutApi {
+public class TransactionApiController implements TransactionApi {
 
-    private static final Logger log = LoggerFactory.getLogger(LogoutApiController.class);
+    private static final Logger log = LoggerFactory.getLogger(TransactionApiController.class);
 
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
-    public LogoutApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public TransactionApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
-    public ResponseEntity<Void> logout() {
+    public ResponseEntity<Transaction> getTransactionById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transaction to get", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        if (accept != null && accept.contains("application/json")) {
+            try {
+                return new ResponseEntity<Transaction>(objectMapper.readValue("{\n  \"accountTo\" : \"NL01INHO0000000002\",\n  \"amount\" : 13.37,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"accountFrom\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transaction.class), HttpStatus.NOT_IMPLEMENTED);
+            } catch (IOException e) {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<Transaction>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

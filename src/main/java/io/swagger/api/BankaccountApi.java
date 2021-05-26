@@ -5,7 +5,6 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.ArrayOfBankAccounts;
 import io.swagger.model.BankAccount;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,31 +34,42 @@ import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @Validated
-public interface BankaccountsApi {
+public interface BankaccountApi {
 
-    @Operation(summary = "Create a new BankAccount", description = "Calling this allows you to create a sBank Account", security = {
+    @Operation(summary = "Closes a Bank Account by IBAN", description = "Calling this allows you to close a specific Bank Account by id", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Account created", content = @Content(schema = @Schema(implementation = BankAccount.class))),
+        @ApiResponse(responseCode = "200", description = "The Bank account will be closed"),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/bankaccounts",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<BankAccount> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body);
+    @RequestMapping(value = "/bankaccount/{id}",
+        method = RequestMethod.DELETE)
+    ResponseEntity<Void> closeAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to close", required=true, schema=@Schema()) @PathVariable("id") String id);
 
 
-    @Operation(summary = "Get all Bank Accounts", description = "Calling this allows you to fetch all Bank Accounts", security = {
+    @Operation(summary = "Get a Bank Account by IBAN", description = "Calling this allows you to fetch a specific Bank Account by id", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "The Bank Accounts", content = @Content(schema = @Schema(implementation = ArrayOfBankAccounts.class))),
+        @ApiResponse(responseCode = "200", description = "the Bank Account", content = @Content(schema = @Schema(implementation = BankAccount.class))),
         
         @ApiResponse(responseCode = "400", description = "bad input parameter") })
-    @RequestMapping(value = "/bankaccounts",
+    @RequestMapping(value = "/bankaccount/{id}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<ArrayOfBankAccounts> getAllAccounts(@Parameter(in = ParameterIn.QUERY, description = "Get all the accounts for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId);
+    ResponseEntity<BankAccount> getAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to get", required=true, schema=@Schema()) @PathVariable("id") String id);
+
+
+    @Operation(summary = "Update a Bank Account by IBAN", description = "Calling this allows you to update a specific Bank Account by id", security = {
+        @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Account updated", content = @Content(schema = @Schema(implementation = BankAccount.class))),
+        
+        @ApiResponse(responseCode = "400", description = "bad input parameter") })
+    @RequestMapping(value = "/bankaccount/{id}",
+        produces = { "application/json" }, 
+        consumes = { "application/json" }, 
+        method = RequestMethod.PUT)
+    ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required=true, schema=@Schema()) @PathVariable("id") String id, @Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body);
 
 }
 
