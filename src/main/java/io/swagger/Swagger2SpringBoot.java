@@ -6,7 +6,7 @@ import io.swagger.model.User;
 import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
 import io.swagger.model.enums.Type;
-import io.swagger.security.UserService;
+import io.swagger.service.UserService;
 import io.swagger.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

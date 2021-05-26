@@ -1,9 +1,10 @@
-package io.swagger.security;
+package io.swagger.service;
 
 import io.swagger.model.ArrayOfUsers;
 import io.swagger.model.User;
 import io.swagger.model.enums.Status;
 import io.swagger.repository.IUserRepository;
+import io.swagger.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,6 +50,7 @@ public class UserService
         userRepository.save(user);
     }
 
+    //Set a user as inactive
     public void makeInactive(int id){
         User user = findById(id);
         user.setStatus(Status.INACTIVE);
