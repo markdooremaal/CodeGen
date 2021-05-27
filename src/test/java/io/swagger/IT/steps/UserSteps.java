@@ -118,4 +118,42 @@ public class UserSteps {
         User user = objectMapper.readValue(responseEntity.getBody(), User.class);
         Assert.assertEquals(Status.INACTIVE, user.getStatus());
     }
+
+    @When("Ik een bestaande user update")
+    public void ikEenBestaandeUserUpdate() throws URISyntaxException, JsonProcessingException { //@TODO: Standard user object
+        URI uri = new URI(baseUrl + "user/" + USER_ID);
+
+        User user = new User();
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john@doe.com");
+        user.setPassword("test");
+
+        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(user), headers);
+        responseEntity = template.exchange(uri, HttpMethod.PUT, entity, String.class);
+    }
+
+    @When("Ik een niet bestaande user update")
+    public void ikEenNietBestaandeUserUpdate() throws URISyntaxException, JsonProcessingException {
+        URI uri = new URI(baseUrl + "user/" + (USER_ID + 9));
+
+        User user = new User();
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john@doe.com");
+        user.setPassword("test");
+
+        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        try{
+            HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(user), headers);
+            responseEntity = template.exchange(uri, HttpMethod.PUT, entity, String.class);
+        } catch (HttpClientErrorException ex){
+            JwtToken_Singleton.getInstance().setHttpClientErrorException(ex);
+        }
+    }
 }
