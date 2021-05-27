@@ -17,4 +17,11 @@ Feature: Users test
     When Ik een bestaande user aanmaak
     Then Krijg ik een error 409
 
-  #Scenario: Ophalen van een bestaande user geeft een user en status 200
+  Scenario: Inactief maken van een bestaande user geeft status 200
+    When Ik een bestaande user inactief maak
+    Then Is de status van het request 200
+    
+  Scenario: Ophalen van een bestaande inactieve user geeft een user en status 200
+    When Ik een bestaande en inactieve user ophaal
+    Then Is de status van het request 200
+    And Is de status van de gebruiker inactive

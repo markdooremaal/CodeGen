@@ -2,21 +2,21 @@ package io.swagger.IT.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.swagger.model.Body;
 import io.swagger.model.JwtToken_Singleton;
 import io.swagger.model.User;
-import io.swagger.security.JwtTokenProvider;
+import io.swagger.model.enums.Status;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -27,6 +27,7 @@ public class UserSteps {
     private RestTemplate template = new RestTemplate();
     private ResponseEntity<String> responseEntity;
     private ObjectMapper objectMapper = new ObjectMapper();
+    private final int USER_ID = 5;
 
     @When("Ik alle users ophaal")
     public void ikAlleUsersOphaal() throws URISyntaxException {
@@ -90,5 +91,31 @@ public class UserSteps {
     @Then("Krijg ik een error {int}")
     public void krijgIkEenError(int statusCode) {
         Assert.assertEquals(statusCode, JwtToken_Singleton.getInstance().getHttpClientErrorException().getRawStatusCode());
+    }
+
+    @When("Ik een bestaande user inactief maak")
+    public void ikEenBestaandeUserInactiefMaak() throws URISyntaxException {
+        URI uri = new URI(baseUrl + "user/" + USER_ID);
+
+        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        responseEntity = template.exchange(uri, HttpMethod.DELETE, entity, String.class);
+    }
+
+    @When("Ik een bestaande en inactieve user ophaal")
+    public void ikEenBestaandeInactieveUserOphaal() throws URISyntaxException{
+        URI uri = new URI(baseUrl + "user/" + USER_ID);
+
+        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        responseEntity = template.exchange(uri, HttpMethod.GET, entity, String.class);
+    }
+
+    @And("Is de status van de gebruiker inactive")
+    public void isDeStatusVanDeGebruikerInactive() throws IOException {
+        User user = objectMapper.readValue(responseEntity.getBody(), User.class);
+        Assert.assertEquals(Status.INACTIVE, user.getStatus());
     }
 }
