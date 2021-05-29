@@ -1,7 +1,9 @@
 package io.swagger.service;
 
+import io.cucumber.java.bs.A;
 import io.swagger.model.BankAccount;
 import io.swagger.model.Transaction;
+import io.swagger.model.Transfer;
 import io.swagger.model.User;
 import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
@@ -18,6 +20,9 @@ public class SeederService {
 
     @Autowired
     TransactionService transactionService;
+
+    @Autowired
+    TransferService transferService;
 
     public void seedDatabase(){
         BankAccount bankAccount = new BankAccount();
@@ -63,5 +68,12 @@ public class SeederService {
         transaction2.userPerforming(mark.getId());
         transaction2.setAmount(420.00);
         transactionService.storeTransaction(transaction2);
+
+        Transfer transfer = new Transfer();
+        transfer.setAccount("nl58ingb1122832273");
+        transfer.setType(Type.DEPOSIT);
+        transfer.setAmount(30.56);
+        transfer.setUserPerforming(mark.getId());
+        transferService.storeTransfer(transfer);
     }
 }

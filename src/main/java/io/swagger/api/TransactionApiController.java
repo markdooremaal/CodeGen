@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
@@ -62,8 +63,8 @@ public class TransactionApiController implements TransactionApi {
         if (accept != null && accept.contains("application/json")) {
             try {
                 Transaction transaction = transactionService.getTransactionById(id);
-                return ResponseEntity.status(200).body(transaction);
-            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.OK).body(transaction);
+            } catch (IllegalArgumentException e) {
                 log.error("Could not find transaction", e);
                 return new ResponseEntity<Transaction>(HttpStatus.NOT_FOUND);
             }

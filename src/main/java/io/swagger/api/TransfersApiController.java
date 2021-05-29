@@ -1,6 +1,9 @@
 package io.swagger.api;
 
 import io.swagger.model.ArrayOfTransfers;
+import io.swagger.service.TransferService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.server.ResponseStatusException;
 import org.threeten.bp.OffsetDateTime;
 import io.swagger.model.Transfer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,18 +47,31 @@ public class TransfersApiController implements TransfersApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    TransferService transferService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public TransfersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
-    public ResponseEntity<Transfer> createTransfer(@Parameter(in = ParameterIn.DEFAULT, description = "Transfer object", required=true, schema=@Schema()) @Valid @RequestBody Transfer body) {
+    public ResponseEntity<Transfer> createTransfer(@Parameter(in = ParameterIn.DEFAULT, description = "Transfer object", required = true, schema = @Schema()) @Valid @RequestBody Transfer body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<Transfer>(objectMapper.readValue("{\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transfer.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
+                Transfer transfer = new Transfer();
+                transfer.setAccount(body.getAccount());
+                transfer.setType(body.getType());
+                transfer.setAmount(body.getAmount());
+                transfer.setUserPerforming(body.getUserPerforming());
+
+
+                //:TODO Needs same checks as in transactions
+                transferService.storeTransfer(transfer);
+
+                return ResponseEntity.status(HttpStatus.OK).body(transfer);
+            } catch (IllegalArgumentException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<Transfer>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -64,13 +80,18 @@ public class TransfersApiController implements TransfersApi {
         return new ResponseEntity<Transfer>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<ArrayOfTransfers> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId,@Pattern(regexp="^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "account", required = false) String account,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "deposit", "withdrawal" }
-)) @Valid @RequestParam(value = "type", required = false) String type,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp) {
+    public ResponseEntity<ArrayOfTransfers> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user", schema = @Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp = "^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "account", required = false) String account, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema(allowableValues = {"deposit", "withdrawal"}
+    )) @Valid @RequestParam(value = "type", required = false) String type, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<ArrayOfTransfers>(objectMapper.readValue("[ {\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}, {\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n} ]", ArrayOfTransfers.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
+
+                ArrayOfTransfers transfers = new ArrayOfTransfers();
+                transfers = transferService.getAllTransfers();
+
+
+                return ResponseEntity.status(200).body(transfers);
+            } catch (IllegalArgumentException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<ArrayOfTransfers>(HttpStatus.INTERNAL_SERVER_ERROR);
             }

@@ -9,6 +9,7 @@ import io.swagger.security.JwtTokenProvider;
 import io.swagger.service.TransactionService;
 import io.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.server.ResponseStatusException;
 import org.threeten.bp.OffsetDateTime;
 import io.swagger.model.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,8 +85,8 @@ public class TransactionsApiController implements TransactionsApi {
                 // accountTo.setAmount(+amount)
                 transactionService.storeTransaction(transaction);
 
-                return ResponseEntity.status(200).body(transaction);
-            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.OK).body(transaction);
+            } catch (IllegalArgumentException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -153,6 +154,6 @@ public class TransactionsApiController implements TransactionsApi {
                     t -> userPerforming.equals(t.getUserPerforming())).collect(Collectors.toCollection(ArrayOfTransactions::new));
         }
 
-        return ResponseEntity.status(200).body(transactions);
+        return ResponseEntity.status(HttpStatus.OK).body(transactions);
     }
 }

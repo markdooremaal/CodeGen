@@ -1,7 +1,9 @@
 package io.swagger.api;
 
+import io.swagger.model.Transaction;
 import io.swagger.model.Transfer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.service.TransferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
@@ -42,6 +46,9 @@ public class TransferApiController implements TransferApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    private TransferService transferService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public TransferApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -52,10 +59,11 @@ public class TransferApiController implements TransferApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<Transfer>(objectMapper.readValue("{\n  \"amount\" : 10.42,\n  \"userPerforming\" : 1,\n  \"id\" : 1,\n  \"type\" : \"deposit\",\n  \"account\" : \"NL01INHO0000000001\",\n  \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\"\n}", Transfer.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Transfer>(HttpStatus.INTERNAL_SERVER_ERROR);
+                Transfer transfer = transferService.getTransferById(id);
+                return ResponseEntity.status(200).body(transfer);
+            } catch (IllegalArgumentException e) {
+                log.error("Could not find specified transfer", e);
+                return new ResponseEntity<Transfer>(HttpStatus.NOT_FOUND);
             }
         }
 
