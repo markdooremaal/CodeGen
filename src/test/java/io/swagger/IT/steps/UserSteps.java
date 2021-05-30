@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.swagger.model.Body;
+import io.swagger.model.dto.LoginDTO;
 import io.swagger.model.JwtToken_Singleton;
 import io.swagger.model.User;
 import io.swagger.model.enums.Status;
@@ -27,7 +27,7 @@ public class UserSteps {
     private RestTemplate template = new RestTemplate();
     private ResponseEntity<String> responseEntity;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private final int USER_ID = 5;
+    private final int USER_ID = 1;
 
     @When("Ik alle users ophaal")
     public void ikAlleUsersOphaal() throws URISyntaxException {
@@ -47,12 +47,12 @@ public class UserSteps {
     @When("Ik inlog met {string} {string}")
     public void ikInlogMet(String email, String password) throws URISyntaxException, JsonProcessingException {
         URI uri = new URI(baseUrl + "login");
-        Body loginBody = new Body();
-        loginBody.setEmail(email);
-        loginBody.setPassword(password);
+        LoginDTO loginLoginDTO = new LoginDTO();
+        loginLoginDTO.setEmail(email);
+        loginLoginDTO.setPassword(password);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(loginBody), headers);
+        HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(loginLoginDTO), headers);
         responseEntity = template.postForEntity(uri, entity, String.class);
     }
 

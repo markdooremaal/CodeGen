@@ -1,7 +1,7 @@
 package io.swagger.api;
 
-import io.swagger.model.Body;
-import io.swagger.model.InlineResponse200;
+import io.swagger.model.dto.LoginDTO;
+import io.swagger.model.dto.LoginResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,19 +38,19 @@ public class LoginApiController implements LoginApi {
         this.request = request;
     }
 
-    public ResponseEntity<InlineResponse200> login(@Parameter(in = ParameterIn.DEFAULT, description = "Username and password", required=true, schema=@Schema()) @Valid @RequestBody Body body) {
+    public ResponseEntity<LoginResponseDTO> login(@Parameter(in = ParameterIn.DEFAULT, description = "Username and password", required=true, schema=@Schema()) @Valid @RequestBody LoginDTO loginDTO) {
         String accept = request.getHeader("Accept");
         if (accept != null && request.getContentType().equals("application/json")) {
             try {
-                String jwtToken = userService.login(body.getEmail(), body.getPassword());
-                return new ResponseEntity<InlineResponse200>(objectMapper.readValue("{\n  \"token\" : \"" + jwtToken + "\"\n}", InlineResponse200.class), HttpStatus.OK);
+                String jwtToken = userService.login(loginDTO.getEmail(), loginDTO.getPassword());
+                return new ResponseEntity<LoginResponseDTO>(objectMapper.readValue("{\n  \"token\" : \"" + jwtToken + "\"\n}", LoginResponseDTO.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<InlineResponse200>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<LoginResponseDTO>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<InlineResponse200>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<LoginResponseDTO>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

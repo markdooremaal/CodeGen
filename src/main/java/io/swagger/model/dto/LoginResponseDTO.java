@@ -1,12 +1,9 @@
-package io.swagger.model;
+package io.swagger.model.dto;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 
 /**
  * InlineResponse200
@@ -16,11 +13,11 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-25T09:30:53.687Z[GMT]")
 
 
-public class InlineResponse200   {
+public class LoginResponseDTO {
   @JsonProperty("token")
   private String token = null;
 
-  public InlineResponse200 token(String token) {
+  public LoginResponseDTO token(String token) {
     this.token = token;
     return this;
   }
@@ -48,8 +45,8 @@ public class InlineResponse200   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    InlineResponse200 inlineResponse200 = (InlineResponse200) o;
-    return Objects.equals(this.token, inlineResponse200.token);
+    LoginResponseDTO loginResponseDTO = (LoginResponseDTO) o;
+    return Objects.equals(this.token, loginResponseDTO.token);
   }
 
   @Override

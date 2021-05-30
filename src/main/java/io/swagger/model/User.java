@@ -55,7 +55,6 @@ public class User   {
 
   @JsonProperty("bankAccounts")
   @OneToMany(targetEntity=BankAccount.class, mappedBy="iban", fetch= FetchType.EAGER)
-  @Valid
   private List<BankAccount> bankAccounts = null;
 
   public User id(Integer id) {
