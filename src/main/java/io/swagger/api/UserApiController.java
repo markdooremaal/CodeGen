@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ public class UserApiController implements UserApi {
             return new ResponseEntity<User>(user, HttpStatus.OK);
         }
 
-        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
     }
     //endregion
 
@@ -64,18 +65,14 @@ public class UserApiController implements UserApi {
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             body.setId(id); //Make sure to overwrite the id of the user object to that of the id to update
 
-            try {
-                if(userService.findById(id) == null)
-                    return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            if(userService.findById(id) == null)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No user found with this id");
 
-                userService.update(body);
-                return new ResponseEntity<User>(body, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            userService.update(body);
+            return new ResponseEntity<User>(body, HttpStatus.OK);
         }
 
-        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
     }
     //endregion
 }
