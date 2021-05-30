@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final String[] WHITELIST = {
+    private static final String[] WHITELIST = {
             "/login",
             "/h2-console/**/**",
             "/swagger-ui/**/**",
