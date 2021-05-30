@@ -19,6 +19,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final String[] WHITELIST = {
+            "/login",
+            "/h2-console/**/**",
+            "/swagger-ui/**/**",
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/api-docs",
+            "webjars/**"
+    };
+
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
 
@@ -29,9 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //Api is stateless
 
         http.authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/h2-console/**/**").permitAll()
-                .antMatchers("/swagger-ui/**/**").permitAll()
+                .antMatchers(WHITELIST).permitAll()
                 .anyRequest().authenticated();
 
         //Make sure that the request is filtered before trying to access a location,
@@ -47,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/h2-console/**/**");
+        web.ignoring().antMatchers(WHITELIST);
     }
 
     @Bean
