@@ -5,6 +5,7 @@ import io.swagger.model.BankAccount;
 import io.swagger.model.Transaction;
 import io.swagger.model.Transfer;
 import io.swagger.model.User;
+import io.swagger.model.enums.AccountType;
 import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
 import io.swagger.model.enums.Type;
@@ -29,7 +30,7 @@ public class SeederService {
         bankAccount.setIban("test");
         bankAccount.setBalance(0.0);
         bankAccount.setStatus(Status.ACTIVE);
-        bankAccount.setType(Type.DEPOSIT); //@TODO: Proper type
+        bankAccount.setAccountType(AccountType.REGULAR); //@TODO: Proper type
 
         User bram = new User();
         bram.setEmail("bram@bramsierhuis.nl");

@@ -2,17 +2,14 @@ package io.swagger.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.model.enums.AccountType;
 import io.swagger.model.enums.Status;
-import io.swagger.model.enums.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
@@ -34,8 +31,8 @@ public class BankAccount   {
   @JsonProperty("status")
   private Status status = null;
 
-  @JsonProperty("type")
-  private Type type = null;
+  @JsonProperty("accountType")
+  private AccountType accountType = null;
 
   @JsonProperty("balance")
   private Double balance = null;
@@ -102,24 +99,24 @@ public class BankAccount   {
     this.status = status;
   }
 
-  public BankAccount type(Type type) {
-    this.type = type;
+  public BankAccount accountType(AccountType accountType) {
+    this.accountType = accountType;
     return this;
   }
 
   /**
    * Account type
-   * @return type
+   * @return AccountType
    **/
   @Schema(example = "regular", required = true, description = "Account type")
       @NotNull
 
-    public Type getType() {
-    return type;
+    public AccountType getAccountType() {
+    return accountType;
   }
 
-  public void setType(Type type) {
-    this.type = type;
+  public void setAccountType(AccountType accountType) {
+    this.accountType = accountType;
   }
 
   public BankAccount balance(Double balance) {
@@ -174,14 +171,14 @@ public class BankAccount   {
     return Objects.equals(this.iban, bankAccount.iban) &&
         Objects.equals(this.userId, bankAccount.userId) &&
         Objects.equals(this.status, bankAccount.status) &&
-        Objects.equals(this.type, bankAccount.type) &&
+        Objects.equals(this.accountType, bankAccount.accountType) &&
         Objects.equals(this.balance, bankAccount.balance) &&
         Objects.equals(this.absoluteLimit, bankAccount.absoluteLimit);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(iban, userId, status, type, balance, absoluteLimit);
+    return Objects.hash(iban, userId, status, accountType, balance, absoluteLimit);
   }
 
   @Override
@@ -192,7 +189,7 @@ public class BankAccount   {
     sb.append("    iban: ").append(toIndentedString(iban)).append("\n");
     sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    type: ").append(toIndentedString(accountType)).append("\n");
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");
     sb.append("    absoluteLimit: ").append(toIndentedString(absoluteLimit)).append("\n");
     sb.append("}");
