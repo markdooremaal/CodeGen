@@ -90,70 +90,77 @@ public class TransactionsApiController implements TransactionsApi {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
-        return new ResponseEntity<Transaction>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<ArrayOfTransactions> getAllTransactions(@RequestParam Map<String, String> params) {
-        ArrayOfTransactions transactions = new ArrayOfTransactions();
-        Role role = tokenProvider.getRole(tokenProvider.resolveToken(request));
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("application/json")) {
+            ArrayOfTransactions transactions = new ArrayOfTransactions();
+            Role role = tokenProvider.getRole(tokenProvider.resolveToken(request));
 
-        if (role == Role.EMPLOYEE) {
-            transactions = transactionService.getAllTransactions();
-        } else if (role == Role.CUSTOMER) {
-            User user = userService.findByToken(tokenProvider.resolveToken(request));
+            if (role == Role.EMPLOYEE) {
+                transactions = transactionService.getAllTransactions();
+            } else if (role == Role.CUSTOMER) {
+                User user = userService.findByToken(tokenProvider.resolveToken(request));
 
-            List<BankAccount> bankAccounts = user.getBankAccounts();
+                for (BankAccount bankAccount : user.getBankAccounts()) {
+                    List<Transaction> accountTransactions = transactionService.getTransactionsForUser(bankAccount.getIban());
+                    for (Transaction transaction : accountTransactions) {
+                        if (!transactions.contains(transaction))
+                            transactions.add(transaction);
+                    }
+                }
+            }
 
-            transactions = transactionService.getAllTransactions();
-            // Maybe use ibanFromOrTo
-            // Get all ibans for specific user
-            // Loop through results filter on iban- from/to add matching to list.
+            /*
+             * Filter based on IBAN-From, IBAN-To or both
+             */
+            if (params.containsKey("ibanFrom") && !params.containsKey("ibanTo")) {
+                transactions = transactions.stream().filter(
+                        t -> params.get("ibanFrom").equals(t.getAccountFrom())).collect(Collectors.toCollection(ArrayOfTransactions::new));
+            } else if (!params.containsKey("ibanFrom") && params.containsKey("ibanTo")) {
+                transactions = transactions.stream().filter(
+                        t -> params.get("ibanTo").equals(t.getAccountTo())).collect(Collectors.toCollection(ArrayOfTransactions::new));
+            } else if (params.containsKey("ibanFrom") && params.containsKey("ibanTo")) {
+                transactions = transactions.stream().filter(
+                        t -> params.get("ibanFrom").equals(t.getAccountFrom())
+                                && params.get("ibanTo").equals(t.getAccountTo())).collect(Collectors.toCollection(ArrayOfTransactions::new));
+            }
+
+            /*
+             * Filter based on (Offset)DateTime
+             */
+            if (params.containsKey("timestamp")) {
+                transactions = transactions.stream().filter(
+                        t -> OffsetDateTime.parse(params.get("timestamp")).equals(t.getTimestamp())).collect(Collectors.toCollection(ArrayOfTransactions::new));
+            }
+
+            /*
+             * Only show transactions where the IBAN-From or IBAN-To matches query
+             * Only available if user is an employee
+             */
+            if (params.containsKey("ibanToOrFrom") && role == Role.EMPLOYEE) {
+                transactions = transactions.stream().filter(
+                        t -> params.get("ibanToOrFrom").equals(t.getAccountFrom())
+                                || params.get("ibanToOrFrom").equals(t.getAccountTo())).collect(Collectors.toCollection(ArrayOfTransactions::new));
+            }
+
+            /*
+             * Filter based on the user performing the transaction
+             * Only available if user is an employee
+             */
+            if (params.containsKey("userPerforming") && role == Role.EMPLOYEE) {
+                Integer userPerforming = Integer.parseInt(params.get("userPerforming"));
+                transactions = transactions.stream().filter(
+                        t -> userPerforming.equals(t.getUserPerforming())).collect(Collectors.toCollection(ArrayOfTransactions::new));
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(transactions);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
-
-        /*
-         * Filter based on IBAN-From, IBAN-To or both
-         */
-        if (params.containsKey("ibanFrom") && !params.containsKey("ibanTo")) {
-            transactions = transactions.stream().filter(
-                    t -> params.get("ibanFrom").equals(t.getAccountFrom())).collect(Collectors.toCollection(ArrayOfTransactions::new));
-        } else if (!params.containsKey("ibanFrom") && params.containsKey("ibanTo")) {
-            transactions = transactions.stream().filter(
-                    t -> params.get("ibanTo").equals(t.getAccountTo())).collect(Collectors.toCollection(ArrayOfTransactions::new));
-        } else if (params.containsKey("ibanFrom") && params.containsKey("ibanTo")) {
-            transactions = transactions.stream().filter(
-                    t -> params.get("ibanFrom").equals(t.getAccountFrom())
-                            && params.get("ibanTo").equals(t.getAccountTo())).collect(Collectors.toCollection(ArrayOfTransactions::new));
-        }
-
-        /*
-         * Filter based on (Offset)DateTime
-         */
-        if (params.containsKey("timestamp")) {
-            transactions = transactions.stream().filter(
-                    t -> OffsetDateTime.parse(params.get("timestamp")).equals(t.getTimestamp())).collect(Collectors.toCollection(ArrayOfTransactions::new));
-        }
-
-        /*
-         * Only show transactions where the IBAN-From or IBAN-To matches query
-         * Only available if user is an employee
-         */
-        if (params.containsKey("ibanToOrFrom") && role == Role.EMPLOYEE) {
-            transactions = transactions.stream().filter(
-                    t -> params.get("ibanToOrFrom").equals(t.getAccountFrom())
-                            || params.get("ibanToOrFrom").equals(t.getAccountTo())).collect(Collectors.toCollection(ArrayOfTransactions::new));
-        }
-
-        /*
-         * Filter based on the user performing the transaction
-         * Only available if user is an employee
-         */
-        if (params.containsKey("userPerforming") && role == Role.EMPLOYEE) {
-            Integer userPerforming = Integer.parseInt(params.get("userPerforming"));
-            transactions = transactions.stream().filter(
-                    t -> userPerforming.equals(t.getUserPerforming())).collect(Collectors.toCollection(ArrayOfTransactions::new));
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(transactions);
     }
 }

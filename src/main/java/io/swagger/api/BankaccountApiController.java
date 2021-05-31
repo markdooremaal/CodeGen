@@ -2,6 +2,8 @@ package io.swagger.api;
 
 import io.swagger.model.BankAccount;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.enums.Status;
+import io.swagger.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
@@ -42,43 +46,59 @@ public class BankaccountApiController implements BankaccountApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
+    private BankAccountService bankAccountService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public BankaccountApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
-    public ResponseEntity<Void> closeAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to close", required=true, schema=@Schema()) @PathVariable("id") String id) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Void> closeAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to close", required = true, schema = @Schema()) @PathVariable("id") String id) {
+        BankAccount bankAccount = bankAccountService.getBankAccountByIban(id);
+
+        if (bankAccount == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccount found with this id");
+
+        bankAccount.setStatus(Status.INACTIVE);
+        bankAccountService.storeBankAccount(bankAccount);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    public ResponseEntity<BankAccount> getAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to get", required=true, schema=@Schema()) @PathVariable("id") String id) {
+    public ResponseEntity<BankAccount> getAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to get", required = true, schema = @Schema()) @PathVariable("id") String id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<BankAccount>(objectMapper.readValue("{\n  \"balance\" : 500.5,\n  \"absoluteLimit\" : -1000,\n  \"iban\" : \"NL01INHO0000000001\",\n  \"type\" : \"regular\",\n  \"userId\" : 1,\n  \"status\" : \"Open\"\n}", BankAccount.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<BankAccount>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+            BankAccount bankAccount = bankAccountService.getBankAccountByIban(id);
 
-        return new ResponseEntity<BankAccount>(HttpStatus.NOT_IMPLEMENTED);
+            if (bankAccount == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccount found with this id");
+
+            return ResponseEntity.status(HttpStatus.OK).body(bankAccount);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
+        }
     }
 
-    public ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required=true, schema=@Schema()) @PathVariable("id") String id,@Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body) {
+    public ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required = true, schema = @Schema()) @PathVariable("id") String id, @Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required = true, schema = @Schema()) @Valid @RequestBody BankAccount body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<BankAccount>(objectMapper.readValue("{\n  \"balance\" : 500.5,\n  \"absoluteLimit\" : -1000,\n  \"iban\" : \"NL01INHO0000000001\",\n  \"type\" : \"regular\",\n  \"userId\" : 1,\n  \"status\" : \"Open\"\n}", BankAccount.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<BankAccount>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+            BankAccount bankAccount = bankAccountService.getBankAccountByIban(id);
 
-        return new ResponseEntity<BankAccount>(HttpStatus.NOT_IMPLEMENTED);
+            if (bankAccount == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccount found with this id");
+
+            bankAccount.setUserId(body.getUserId());
+            bankAccount.setStatus(body.getStatus());
+            bankAccount.setAccountType(body.getAccountType());
+            bankAccount.setBalance(body.getBalance());
+            bankAccount.setAbsoluteLimit(body.getAbsoluteLimit());
+            bankAccountService.storeBankAccount(bankAccount);
+
+            return ResponseEntity.status(HttpStatus.OK).body(bankAccount);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
+        }
     }
 
 }

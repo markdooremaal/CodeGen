@@ -55,19 +55,23 @@ public class TransferApiController implements TransferApi {
         this.request = request;
     }
 
-    public ResponseEntity<Transfer> getTransferById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transfer to get", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
+    /**
+     * Display the specified transfer.
+     * :TODO Check if role == employee else user needs to be sender or receiver.
+     */
+    public ResponseEntity<Transfer> getTransferById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transfer to get", required = true, schema = @Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                Transfer transfer = transferService.getTransferById(id);
-                return ResponseEntity.status(200).body(transfer);
-            } catch (IllegalArgumentException e) {
-                log.error("Could not find specified transfer", e);
-                return new ResponseEntity<Transfer>(HttpStatus.NOT_FOUND);
-            }
-        }
+            Transfer transfer = transferService.getTransferById(id);
 
-        return new ResponseEntity<Transfer>(HttpStatus.NOT_IMPLEMENTED);
+            if (transfer == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transfer found with this id");
+
+            return ResponseEntity.status(HttpStatus.OK).body(transfer);
+
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
+        }
     }
 
 }

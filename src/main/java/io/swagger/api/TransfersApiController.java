@@ -75,9 +75,9 @@ public class TransfersApiController implements TransfersApi {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<Transfer>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
-
-        return new ResponseEntity<Transfer>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     public ResponseEntity<ArrayOfTransfers> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user", schema = @Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp = "^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "account", required = false) String account, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema(allowableValues = {"deposit", "withdrawal"}
@@ -95,9 +95,8 @@ public class TransfersApiController implements TransfersApi {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<ArrayOfTransfers>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
-
-        return new ResponseEntity<ArrayOfTransfers>(HttpStatus.NOT_IMPLEMENTED);
     }
-
 }

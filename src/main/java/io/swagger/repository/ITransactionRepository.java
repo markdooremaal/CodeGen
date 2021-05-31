@@ -15,4 +15,6 @@ public interface ITransactionRepository extends JpaRepository<Transaction, Integ
 
     ArrayOfTransactions findByAccountFromLikeAndAccountToLike(String accountFrom, String accountTo);
 
+    ArrayOfTransactions findByAccountFromLikeOrAccountToLike(String accountFrom, String accountTo);
+
 }

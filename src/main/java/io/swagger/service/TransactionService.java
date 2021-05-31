@@ -27,19 +27,10 @@ public class TransactionService {
     }
 
     public Transaction getTransactionById(Integer id) {
-        return transactionRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        return transactionRepository.findById(id).orElse(null);
     }
 
-    public ArrayOfTransactions getTransactionByFrom(String accountFrom) {
-        return transactionRepository.findByAccountFromLike(accountFrom);
+    public ArrayOfTransactions getTransactionsForUser(String iban){
+        return transactionRepository.findByAccountFromLikeOrAccountToLike(iban, iban);
     }
-
-    public ArrayOfTransactions getTransactionByTo(String accountTo) {
-        return transactionRepository.findByAccountToLike(accountTo);
-    }
-
-    public ArrayOfTransactions getTransactionByFromAndTo(String accountFrom, String accountTo) {
-        return transactionRepository.findByAccountFromLikeAndAccountToLike(accountFrom, accountTo);
-    }
-
 }

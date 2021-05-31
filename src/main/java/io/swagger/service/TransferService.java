@@ -19,7 +19,7 @@ public class TransferService {
     }
 
     public Transfer getTransferById(Integer id) {
-        return transferRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        return transferRepository.findById(id).orElse(null);
     }
 
     public void storeTransfer(Transfer transfer) {

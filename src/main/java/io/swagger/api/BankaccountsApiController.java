@@ -1,8 +1,10 @@
 package io.swagger.api;
 
 import io.swagger.model.ArrayOfBankAccounts;
+import io.swagger.model.ArrayOfTransactions;
 import io.swagger.model.BankAccount;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
@@ -42,6 +46,9 @@ public class BankaccountsApiController implements BankaccountsApi {
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
+
+    @Autowired
+    private BankAccountService bankAccountService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public BankaccountsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -63,18 +70,19 @@ public class BankaccountsApiController implements BankaccountsApi {
         return new ResponseEntity<BankAccount>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    // :TODO same checks based on jwt/employee/customer
     public ResponseEntity<ArrayOfBankAccounts> getAllAccounts(@Parameter(in = ParameterIn.QUERY, description = "Get all the accounts for a specific user" ,schema=@Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ArrayOfBankAccounts>(objectMapper.readValue("[ {\n  \"balance\" : 500.5,\n  \"absoluteLimit\" : -1000,\n  \"iban\" : \"NL01INHO0000000001\",\n  \"type\" : \"regular\",\n  \"userId\" : 1,\n  \"status\" : \"Open\"\n}, {\n  \"balance\" : 500.5,\n  \"absoluteLimit\" : -1000,\n  \"iban\" : \"NL01INHO0000000001\",\n  \"type\" : \"regular\",\n  \"userId\" : 1,\n  \"status\" : \"Open\"\n} ]", ArrayOfBankAccounts.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ArrayOfBankAccounts>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+            ArrayOfBankAccounts bankAccounts = bankAccountService.getAllBankAccounts();
 
-        return new ResponseEntity<ArrayOfBankAccounts>(HttpStatus.NOT_IMPLEMENTED);
+            if (bankAccounts == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccounts found");
+
+            return ResponseEntity.status(HttpStatus.OK).body(bankAccounts);
+        } else {
+            return new ResponseEntity<ArrayOfBankAccounts>(HttpStatus.NOT_IMPLEMENTED);
+        }
     }
 
 }

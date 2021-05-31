@@ -17,7 +17,7 @@ public class BankAccountService {
     }
 
     public BankAccount getBankAccountByIban(String iban) {
-        return bankAccountRepository.findByIbanLike(iban);
+        return bankAccountRepository.findById(iban).orElse(null);
     }
 
     public void storeBankAccount(BankAccount bankAccount) {

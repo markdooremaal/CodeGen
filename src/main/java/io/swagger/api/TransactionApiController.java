@@ -58,19 +58,18 @@ public class TransactionApiController implements TransactionApi {
      * Display the specified transaction.
      * :TODO Check if role == employee else user needs to be sender or receiver.
      */
-    public ResponseEntity<Transaction> getTransactionById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transaction to get", required=true, schema=@Schema()) @PathVariable("id") Integer id) {
+    public ResponseEntity<Transaction> getTransactionById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transaction to get", required = true, schema = @Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                Transaction transaction = transactionService.getTransactionById(id);
-                return ResponseEntity.status(HttpStatus.OK).body(transaction);
-            } catch (IllegalArgumentException e) {
-                log.error("Could not find transaction", e);
-                return new ResponseEntity<Transaction>(HttpStatus.NOT_FOUND);
-            }
-        }
+            Transaction transaction = transactionService.getTransactionById(id);
 
-        return new ResponseEntity<Transaction>(HttpStatus.NOT_IMPLEMENTED);
+            if (transaction == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transaction found with this id");
+
+            return ResponseEntity.status(HttpStatus.OK).body(transaction);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
+        }
     }
 
 }
