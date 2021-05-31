@@ -25,12 +25,18 @@ public class SeederService {
     @Autowired
     TransferService transferService;
 
+    @Autowired
+    BankAccountService bankAccountService;
+
     public void seedDatabase(){
         BankAccount bankAccount = new BankAccount();
-        bankAccount.setIban("test");
+        bankAccount.setIban("nl58ingb1122832273");
         bankAccount.setBalance(0.0);
         bankAccount.setStatus(Status.ACTIVE);
         bankAccount.setAccountType(AccountType.REGULAR); //@TODO: Proper type
+        bankAccount.setAbsoluteLimit(-100.0);
+        bankAccount.setUserId(2);
+        bankAccountService.storeBankAccount(bankAccount);
 
         User bram = new User();
         bram.setEmail("bram@bramsierhuis.nl");

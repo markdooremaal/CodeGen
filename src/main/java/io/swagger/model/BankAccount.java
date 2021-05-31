@@ -21,7 +21,6 @@ import javax.validation.constraints.*;
 @Entity
 public class BankAccount   {
   @Id
-  @GeneratedValue
   @JsonProperty("iban")
   private String iban = null;
 
@@ -51,7 +50,8 @@ public class BankAccount   {
    **/
   @Schema(example = "NL01INHO0000000001", description = "The unique identifier for the account")
   
-  @Pattern(regexp="^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$")   public String getIban() {
+  @Pattern(regexp="^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$")
+  public String getIban() {
     return iban;
   }
 
