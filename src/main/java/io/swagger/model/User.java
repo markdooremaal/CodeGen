@@ -54,7 +54,7 @@ public class User   {
   private Double transactionLimit = null;
 
   @JsonProperty("bankAccounts")
-  @OneToMany(targetEntity=BankAccount.class, mappedBy="iban", fetch= FetchType.EAGER)
+  @OneToMany(targetEntity=BankAccount.class, fetch= FetchType.EAGER)
   private List<BankAccount> bankAccounts = null;
 
   public User id(Integer id) {

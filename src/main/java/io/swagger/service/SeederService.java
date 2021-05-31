@@ -59,7 +59,6 @@ public class SeederService {
         mark.setLastName("van Dooremaal");
         mark.setFirstName("Mark");
         mark.setTransactionLimit(10.00);
-        mark.addBankAccountsItem(bankAccount);
         userService.add(mark);
 
         Transaction transaction = new Transaction();
