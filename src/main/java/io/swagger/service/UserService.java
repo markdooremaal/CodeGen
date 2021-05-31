@@ -7,6 +7,7 @@ import io.swagger.model.enums.Status;
 import io.swagger.repository.IUserRepository;
 import io.swagger.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +15,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 public class UserService
@@ -35,9 +39,14 @@ public class UserService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //Get all users
+    /*//Get all users
     public ArrayOfUsers findAll(){
         return userRepository.findAll();
+    }*/
+
+    public ArrayOfUsers findAll(Specification<User> specification){
+        List<User> users = userRepository.findAll(specification);
+        return new ArrayOfUsers(users);
     }
 
     //Get a user by id

@@ -27,7 +27,7 @@ public class UserSteps {
     private RestTemplate template = new RestTemplate();
     private ResponseEntity<String> responseEntity;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private final int USER_ID = 1;
+    private final int USER_ID = 2;
 
     @When("Ik alle users ophaal")
     public void ikAlleUsersOphaal() throws URISyntaxException {
@@ -36,6 +36,8 @@ public class UserSteps {
 
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         responseEntity = template.exchange(uri, HttpMethod.GET, entity, String.class);
+
+        System.out.println(responseEntity.getBody());
     }
 
     @Then("Is de status van het request {int}")

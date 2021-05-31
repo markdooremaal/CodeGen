@@ -23,7 +23,7 @@ public enum AccountType {
     @JsonCreator
     public static AccountType fromValue(String text) {
         for (AccountType b : AccountType.values()) {
-            if (String.valueOf(b.value).equals(text)) {
+            if (String.valueOf(b.value).equalsIgnoreCase(text)) {
                 return b;
             }
         }

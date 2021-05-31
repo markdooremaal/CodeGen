@@ -24,7 +24,7 @@ public enum Role implements GrantedAuthority {
     @JsonCreator
     public static Role fromValue(String text) {
         for (Role b : Role.values()) {
-            if (String.valueOf(b.value).equals(text)) {
+            if (String.valueOf(b.value).equalsIgnoreCase(text)) {
                 return b;
             }
         }

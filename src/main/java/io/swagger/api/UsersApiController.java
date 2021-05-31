@@ -3,6 +3,10 @@ package io.swagger.api;
 import io.swagger.model.ArrayOfUsers;
 import io.swagger.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.enums.Role;
+import io.swagger.model.enums.Status;
+import io.swagger.model.searches.UserSearch;
+import io.swagger.model.searches.UserSpecification;
 import io.swagger.security.JwtTokenProvider;
 import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,8 +69,25 @@ public class UsersApiController implements UsersApi {
 )) @Valid @RequestParam(value = "status", required = false) String status) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
-            ArrayOfUsers users = userService.findAll(); //@TODO: Filters
+            //ArrayOfUsers users = userService.findAll(); //@TODO: Filters
+            UserSearch criteria = new UserSearch();
+            if(name != null)
+                criteria.setFirstName(name);
 
+            if(name != null)
+                criteria.setLastName(name);
+
+            if(email != null)
+                criteria.setEmail(email);
+
+            if(role != null)
+                criteria.setRole(Role.fromValue(role));
+
+            if(status != null)
+                criteria.setStatus(Status.fromValue(status));
+
+            Specification<User> specification = new UserSpecification(criteria);
+            ArrayOfUsers users = userService.findAll(specification);
             return new ResponseEntity<ArrayOfUsers>(users, HttpStatus.OK);
         }
 

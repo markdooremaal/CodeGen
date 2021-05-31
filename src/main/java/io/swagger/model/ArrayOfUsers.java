@@ -1,5 +1,6 @@
 package io.swagger.model;
 
+import java.util.Collection;
 import java.util.Objects;
 import io.swagger.model.User;
 import java.util.ArrayList;
@@ -16,6 +17,10 @@ import javax.validation.constraints.*;
 
 
 public class ArrayOfUsers extends ArrayList<User>  {
+
+  public ArrayOfUsers(Collection<? extends User> c) {
+    super(c);
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {
