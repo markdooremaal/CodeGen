@@ -44,7 +44,10 @@ public class UserApiController implements UserApi {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             User user = userService.findById(id);
-            return new ResponseEntity<User>(user, HttpStatus.OK);
+            if(user != null)
+                return new ResponseEntity<User>(user, HttpStatus.OK);
+
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
         }
 
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
