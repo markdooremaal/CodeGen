@@ -37,7 +37,7 @@ import java.util.Map;
 @Validated
 public interface BankaccountsApi {
 
-    @Operation(summary = "Create a new BankAccount", description = "Calling this allows you to create a sBank Account", security = {
+    @Operation(summary = "Create a new BankAccount", description = "Calling this allows you to create a Bank Account", security = {
         @SecurityRequirement(name = "bearerAuth")    }, tags={ "Accounts" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Account created", content = @Content(schema = @Schema(implementation = BankAccount.class))),
@@ -47,7 +47,7 @@ public interface BankaccountsApi {
         produces = { "application/json" }, 
         consumes = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<BankAccount> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body);
+    ResponseEntity<BankAccount> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "bankaccounts object", required=true, schema=@Schema()) @Valid @RequestBody BankAccount body);
 
 
     @Operation(summary = "Get all Bank Accounts", description = "Calling this allows you to fetch all Bank Accounts", security = {

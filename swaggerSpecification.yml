@@ -573,13 +573,11 @@ components:
           description: Owner of the bank account
           type: integer
           example: 1
-        status:
-          description: Status of the account
+        Status:
+          description: Account status
           type: string
-          enum:
-            - Open
-            - Closed
-          example: Open
+          enum: [ active, inactive ]
+          example: active
         type:
           description: Account type
           type: string

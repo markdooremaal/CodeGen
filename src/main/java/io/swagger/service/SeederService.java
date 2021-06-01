@@ -29,24 +29,6 @@ public class SeederService {
     BankAccountService bankAccountService;
 
     public void seedDatabase(){
-        BankAccount bankAccount = new BankAccount();
-        bankAccount.setIban("nl58ingb1122832273");
-        bankAccount.setBalance(0.0);
-        bankAccount.setStatus(Status.ACTIVE);
-        bankAccount.setAccountType(AccountType.REGULAR); //@TODO: Proper type
-        bankAccount.setAbsoluteLimit(-100.0);
-        bankAccount.setUserId(2);
-        bankAccountService.storeBankAccount(bankAccount);
-
-        BankAccount bankAccount2 = new BankAccount();
-        bankAccount2.setIban("nl58ingb1111832211");
-        bankAccount2.setBalance(20000.0);
-        bankAccount2.setStatus(Status.ACTIVE);
-        bankAccount2.setAccountType(AccountType.REGULAR); //@TODO: Proper type
-        bankAccount2.setAbsoluteLimit(0.0);
-        bankAccount2.setUserId(2);
-        bankAccountService.storeBankAccount(bankAccount2);
-
         User bram = new User();
         bram.setEmail("bram@bramsierhuis.nl");
         bram.setPassword(("test"));
@@ -56,18 +38,7 @@ public class SeederService {
         bram.setLastName("Sierhuis");
         bram.setFirstName("Bram");
         bram.setTransactionLimit(10.00);
-        bram.addBankAccountsItem(bankAccount);
-        bram.addBankAccountsItem(bankAccount2);
         userService.add(bram);
-
-        BankAccount bankAccount3 = new BankAccount();
-        bankAccount3.setIban("nl58rabo2424242424");
-        bankAccount3.setBalance(20000.0);
-        bankAccount3.setStatus(Status.ACTIVE);
-        bankAccount3.setAccountType(AccountType.REGULAR); //@TODO: Proper type
-        bankAccount3.setAbsoluteLimit(0.0);
-        bankAccount3.setUserId(2);
-        bankAccountService.storeBankAccount(bankAccount3);
 
         User mark = new User();
         mark.setEmail("mark@gmail.com");
@@ -80,32 +51,62 @@ public class SeederService {
         mark.setTransactionLimit(10.00);
         userService.add(mark);
 
-        Transaction transaction = new Transaction();
-        transaction.setAccountFrom("nl58ingb1122832273");
-        transaction.setAccountTo("nl05ingb9732254661");
-        transaction.userPerforming(bram.getId());
-        transaction.setAmount(500.00);
-        transactionService.storeTransaction(transaction);
+        User bank = new User();
+        bank.setEmail("info@inhollandbank.com");
+        bank.setPassword("39282y7whorfznffuailfw8hf23AHDS*(A(Hf98eh");
+        bank.setFirstName("Bank of");
+        bank.setLastName("Inholland");
+        userService.add(bank);
 
-        Transaction transaction2 = new Transaction();
-        transaction2.setAccountFrom("nl58ingb1122832273");
-        transaction2.setAccountTo("nl58ingb1111832211");
-        transaction2.userPerforming(bram.getId());
-        transaction2.setAmount(420.00);
-        transactionService.storeTransaction(transaction2);
+        BankAccount mainAccount = new BankAccount();
+        mainAccount.setIban("nl01inho0000000001");
+        mainAccount.setUserId(bank.getId());
+        mainAccount.setStatus(Status.ACTIVE);
+        mainAccount.setAccountType(AccountType.REGULAR);
+        mainAccount.balance(1000000000.0);
+        mainAccount.absoluteLimit(0.0);
+        bankAccountService.storeBankAccount(mainAccount);
 
-        Transaction transaction3 = new Transaction();
-        transaction3.setAccountFrom("nl58rabo2424242424");
-        transaction3.setAccountTo("nl58rabo2424240000");
-        transaction3.userPerforming(mark.getId());
-        transaction3.setAmount(500.00);
-        transactionService.storeTransaction(transaction3);
+        BankAccount bramRegular = new BankAccount();
+        bramRegular.setUserId(bram.getId());
+        bramRegular.setStatus(Status.ACTIVE);
+        bramRegular.setAccountType(AccountType.REGULAR);
+        bramRegular.balance(500.0);
+        bramRegular.absoluteLimit(-1000.0);
+        bankAccountService.storeBankAccount(bramRegular);
 
-        Transfer transfer = new Transfer();
-        transfer.setAccount("nl58ingb1122832273");
-        transfer.setType(Type.DEPOSIT);
-        transfer.setAmount(30.56);
-        transfer.setUserPerforming(mark.getId());
-        transferService.storeTransfer(transfer);
+        BankAccount bramSavings = new BankAccount();
+        bramSavings.setUserId(bram.getId());
+        bramSavings.setStatus(Status.ACTIVE);
+        bramSavings.setAccountType(AccountType.SAVINGS);
+        bramSavings.balance(12000.0);
+        bramSavings.absoluteLimit(0.0);
+        bankAccountService.storeBankAccount(bramSavings);
+
+        BankAccount markRegular = new BankAccount();
+        markRegular.setUserId(mark.getId());
+        markRegular.setStatus(Status.ACTIVE);
+        markRegular.setAccountType(AccountType.REGULAR);
+        markRegular.balance(320.0);
+        markRegular.absoluteLimit(-100.0);
+        bankAccountService.storeBankAccount(markRegular);
+
+        bram.addBankAccountsItem(bramRegular);
+        bram.addBankAccountsItem(bramSavings);
+        userService.update(bram);
+
+        mark.addBankAccountsItem(markRegular);
+        userService.update(mark);
+
+        bank.addBankAccountsItem(mainAccount);
+        userService.update(bank);
+
+        Transaction fromBramToMark = new Transaction();
+        fromBramToMark.setAccountFrom(bramRegular.getIban());
+        fromBramToMark.setAccountTo(markRegular.getIban());
+        fromBramToMark.userPerforming(bram.getId());
+        fromBramToMark.setAmount(150.0);
+        transactionService.storeTransaction(fromBramToMark);
+
     }
 }

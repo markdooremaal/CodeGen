@@ -2,8 +2,12 @@ package io.swagger.api;
 
 import io.swagger.model.BankAccount;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.User;
+import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
+import io.swagger.security.JwtTokenProvider;
 import io.swagger.service.BankAccountService;
+import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -48,6 +52,10 @@ public class BankaccountApiController implements BankaccountApi {
 
     @Autowired
     private BankAccountService bankAccountService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
 
     @org.springframework.beans.factory.annotation.Autowired
     public BankaccountApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -56,24 +64,45 @@ public class BankaccountApiController implements BankaccountApi {
     }
 
     public ResponseEntity<Void> closeAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to close", required = true, schema = @Schema()) @PathVariable("id") String id) {
+        User user = userService.findByToken(tokenProvider.resolveToken(request));
+        if (user.getRole() == Role.CUSTOMER)
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Customers are not allowed to close accounts");
+
+        if (id.equals("nl01inho0000000001"))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to view account");
+
         BankAccount bankAccount = bankAccountService.getBankAccountByIban(id);
 
         if (bankAccount == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccount found with this id");
 
+        if (!user.getBankAccounts().contains(bankAccount))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not own bankAccout");
+
         bankAccount.setStatus(Status.INACTIVE);
-        bankAccountService.storeBankAccount(bankAccount);
+        bankAccountService.updateBankAccount(bankAccount);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     public ResponseEntity<BankAccount> getAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to get", required = true, schema = @Schema()) @PathVariable("id") String id) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
+            if (id.equals("nl01inho0000000001"))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to view account");
+
+            User user = userService.findByToken(tokenProvider.resolveToken(request));
             BankAccount bankAccount = bankAccountService.getBankAccountByIban(id);
 
             if (bankAccount == null)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccount found with this id");
 
+            if (user.getRole() == Role.CUSTOMER) {
+                if (user.getBankAccounts().contains(bankAccount)) {
+                    return ResponseEntity.status(HttpStatus.OK).body(bankAccount);
+                } else {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to view this bankaccount");
+                }
+            }
             return ResponseEntity.status(HttpStatus.OK).body(bankAccount);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
@@ -83,6 +112,14 @@ public class BankaccountApiController implements BankaccountApi {
     public ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required = true, schema = @Schema()) @PathVariable("id") String id, @Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required = true, schema = @Schema()) @Valid @RequestBody BankAccount body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
+            User user = userService.findByToken(tokenProvider.resolveToken(request));
+
+            if (user.getRole() == Role.CUSTOMER)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Customers are not allowed to update accounts");
+
+            if (id.equals("nl01inho0000000001"))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to view account");
+
             BankAccount bankAccount = bankAccountService.getBankAccountByIban(id);
 
             if (bankAccount == null)
@@ -93,7 +130,7 @@ public class BankaccountApiController implements BankaccountApi {
             bankAccount.setAccountType(body.getAccountType());
             bankAccount.setBalance(body.getBalance());
             bankAccount.setAbsoluteLimit(body.getAbsoluteLimit());
-            bankAccountService.storeBankAccount(bankAccount);
+            bankAccountService.updateBankAccount(bankAccount);
 
             return ResponseEntity.status(HttpStatus.OK).body(bankAccount);
         } else {
