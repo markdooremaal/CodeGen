@@ -106,7 +106,7 @@ public class BankaccountsApiController implements BankaccountsApi {
                 }
             }
 
-            if (bankAccounts == null)
+            if (bankAccounts.isEmpty())
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccounts found");
 
             return ResponseEntity.status(HttpStatus.OK).body(bankAccounts);

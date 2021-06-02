@@ -1,9 +1,14 @@
 package io.swagger.api;
 
+import io.swagger.model.BankAccount;
 import io.swagger.model.Transaction;
 import io.swagger.model.Transfer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.User;
+import io.swagger.model.enums.Role;
+import io.swagger.security.JwtTokenProvider;
 import io.swagger.service.TransferService;
+import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -13,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +54,10 @@ public class TransferApiController implements TransferApi {
 
     @Autowired
     private TransferService transferService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransferApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -57,7 +67,6 @@ public class TransferApiController implements TransferApi {
 
     /**
      * Display the specified transfer.
-     * :TODO Check if role == employee else user needs to be sender or receiver.
      */
     public ResponseEntity<Transfer> getTransferById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transfer to get", required = true, schema = @Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
@@ -67,11 +76,18 @@ public class TransferApiController implements TransferApi {
             if (transfer == null)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transfer found with this id");
 
-            return ResponseEntity.status(HttpStatus.OK).body(transfer);
+            User user = userService.findByToken(tokenProvider.resolveToken(request));
 
+            if (user.getRole() == Role.EMPLOYEE)
+                return ResponseEntity.status(HttpStatus.OK).body(transfer);
+
+            if (user.getBankAccounts().stream().anyMatch(bankAccount -> bankAccount.getIban() == transfer.getAccount())) {
+                return ResponseEntity.status(HttpStatus.OK).body(transfer);
+            } else {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to view transfer");
+            }
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
     }
-
 }

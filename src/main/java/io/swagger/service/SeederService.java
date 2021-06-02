@@ -32,7 +32,7 @@ public class SeederService {
         User bram = new User();
         bram.setEmail("bram@bramsierhuis.nl");
         bram.setPassword(("test"));
-        bram.setDayLimit(10.00);
+        bram.setDayLimit(20.00);
         bram.setStatus(Status.ACTIVE);
         bram.setRole(Role.CUSTOMER);
         bram.setLastName("Sierhuis");
@@ -107,6 +107,21 @@ public class SeederService {
         fromBramToMark.userPerforming(bram.getId());
         fromBramToMark.setAmount(150.0);
         transactionService.storeTransaction(fromBramToMark);
+
+        Transfer bramDeposit = new Transfer();
+        bramDeposit.setAccount(bramRegular.getIban());
+        bramDeposit.setType(Type.DEPOSIT);
+        bramDeposit.setAmount(20.0);
+        bramDeposit.setUserPerforming(bram.getId());
+        transferService.storeTransfer(bramDeposit);
+
+        Transfer markWithdrawal = new Transfer();
+        markWithdrawal.setAccount(markRegular.getIban());
+        markWithdrawal.setType(Type.WITHDRAWAL);
+        markWithdrawal.setAmount(20.0);
+        markWithdrawal.setUserPerforming(mark.getId());
+        transferService.storeTransfer(markWithdrawal);
+
 
     }
 }

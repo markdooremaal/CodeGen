@@ -1,11 +1,16 @@
 package io.swagger.api;
 
-import io.swagger.model.ArrayOfTransfers;
+import io.swagger.model.*;
+import io.swagger.model.enums.AccountType;
+import io.swagger.model.enums.Role;
+import io.swagger.model.enums.Type;
+import io.swagger.security.JwtTokenProvider;
+import io.swagger.service.BankAccountService;
 import io.swagger.service.TransferService;
+import io.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.server.ResponseStatusException;
 import org.threeten.bp.OffsetDateTime;
-import io.swagger.model.Transfer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-26T11:40:47.282Z[GMT]")
 @RestController
@@ -48,7 +54,13 @@ public class TransfersApiController implements TransfersApi {
     private final HttpServletRequest request;
 
     @Autowired
-    TransferService transferService;
+    private TransferService transferService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+    @Autowired
+    private BankAccountService bankAccountService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransfersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -59,22 +71,50 @@ public class TransfersApiController implements TransfersApi {
     public ResponseEntity<Transfer> createTransfer(@Parameter(in = ParameterIn.DEFAULT, description = "Transfer object", required = true, schema = @Schema()) @Valid @RequestBody Transfer body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
-                Transfer transfer = new Transfer();
-                transfer.setAccount(body.getAccount());
-                transfer.setType(body.getType());
-                transfer.setAmount(body.getAmount());
-                transfer.setUserPerforming(body.getUserPerforming());
 
+            BankAccount bankAccount = bankAccountService.getBankAccountByIban(body.getAccount());
+            User user = userService.findByToken(tokenProvider.resolveToken(request));
 
-                //:TODO Needs same checks as in transactions
+            if (bankAccount.getAccountType() == AccountType.SAVINGS)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Can't create a transfer for a savings account");
+
+            if (user.getRole() != Role.EMPLOYEE && user.getId() != bankAccount.getUserId())
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Can not create transfer for other account");
+
+            Transfer transfer = new Transfer();
+            transfer.setAccount(body.getAccount());
+            transfer.setType(body.getType());
+            transfer.setAmount(body.getAmount());
+            transfer.setUserPerforming(user.getId());
+
+            if (transfer.getType() == Type.DEPOSIT) {
+                bankAccount.setBalance(bankAccount.getBalance() + transfer.getAmount());
                 transferService.storeTransfer(transfer);
+                bankAccountService.updateBankAccount(bankAccount);
+            } else if (transfer.getType() == Type.WITHDRAWAL) {
+                User accountHolder = userService.findById(bankAccount.getUserId());
 
-                return ResponseEntity.status(HttpStatus.OK).body(transfer);
-            } catch (IllegalArgumentException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Transfer>(HttpStatus.INTERNAL_SERVER_ERROR);
+                if (user.getRole() == Role.CUSTOMER) {
+                    if (transfer.getAmount() >= accountHolder.getTransactionLimit())
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Transaction limit would be exceeded");
+
+                    Double newCurrentDayLimit = accountHolder.getCurrentDayLimit() + transfer.getAmount();
+                    if (newCurrentDayLimit > accountHolder.getDayLimit())
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Day limit would be exceeded");
+
+                    accountHolder.setCurrentDayLimit(newCurrentDayLimit);
+                }
+
+                Double newBalance = bankAccount.getBalance() - transfer.getAmount();
+                if (newBalance <= bankAccount.getAbsoluteLimit())
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Accounts absolute limit would be exceeded");
+
+                bankAccount.setBalance(newBalance);
+                bankAccountService.updateBankAccount(bankAccount);
+                transferService.storeTransfer(transfer);
+                userService.update(accountHolder);
             }
+            return ResponseEntity.status(HttpStatus.OK).body(transfer);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
@@ -84,17 +124,24 @@ public class TransfersApiController implements TransfersApi {
     )) @Valid @RequestParam(value = "type", required = false) String type, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
+            User user = userService.findByToken(tokenProvider.resolveToken(request));
+            ArrayOfBankAccounts bankAccounts = new ArrayOfBankAccounts();
+            ArrayOfTransfers transfers = transferService.getAllTransfers();
 
-                ArrayOfTransfers transfers = new ArrayOfTransfers();
-                transfers = transferService.getAllTransfers();
-
-
-                return ResponseEntity.status(200).body(transfers);
-            } catch (IllegalArgumentException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<ArrayOfTransfers>(HttpStatus.INTERNAL_SERVER_ERROR);
+            if (user.getRole() == Role.EMPLOYEE && userId != null) {
+                bankAccounts = bankAccountService.getBankAccountByUserId(userId);
+                for (BankAccount bankAccount : bankAccounts)
+                    transfers.removeIf(transfer -> transfer.getAccount().equals(bankAccount.getIban()));
+            } else if (user.getRole() == Role.CUSTOMER) {
+                bankAccounts = bankAccountService.getBankAccountByUserId(user.getId());
+                for (BankAccount bankAccount : bankAccounts)
+                    transfers.removeIf(transfer -> transfer.getAccount().equals(bankAccount.getIban()));
             }
+
+            if (transfers.isEmpty())
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transfers found");
+
+            return ResponseEntity.status(HttpStatus.OK).body(transfers);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }

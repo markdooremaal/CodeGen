@@ -50,6 +50,8 @@ public class User   {
   @JsonProperty("dayLimit")
   private Double dayLimit = null;
 
+  private Double currentDayLimit = 0.0;
+
   @JsonProperty("transactionLimit")
   private Double transactionLimit = null;
 
@@ -216,6 +218,14 @@ public class User   {
   public User transactionLimit(Double transactionLimit) {
     this.transactionLimit = transactionLimit;
     return this;
+  }
+
+  public Double getCurrentDayLimit() {
+    return currentDayLimit;
+  }
+
+  public void setCurrentDayLimit(Double currentDayLimit) {
+    this.currentDayLimit = currentDayLimit;
   }
 
   /**
