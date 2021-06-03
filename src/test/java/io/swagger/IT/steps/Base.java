@@ -12,5 +12,6 @@ public class Base {
     protected ObjectMapper objectMapper = new ObjectMapper();
     protected final int USER_ID = 3;
     protected final String UNUSED_IBAN = "nl31inho9492452917";
+    protected final String BANK_IBAN = "nl01inho0000000001";
     protected final String employee_jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJrQGdtYWlsLmNvbSIsImF1dGgiOiJlbXBsb3llZSIsImlhdCI6MTYyMjcxNjY5NSwiZXhwIjoxNjMyNzE2Njk1fQ.Qp8J4MwIbSsYUuMrlEPJZU9VCVKmnQk1dnIJ0u1HPpo";
 }

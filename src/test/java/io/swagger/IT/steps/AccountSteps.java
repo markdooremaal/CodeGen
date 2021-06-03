@@ -38,7 +38,7 @@ public class AccountSteps extends Base {
 
         //Object to add
         BankAccount account = new BankAccount();
-        account.setAccountType(AccountType.REGULAR);
+        account.setAccountType(AccountType.SAVINGS);
         account.setStatus(Status.INACTIVE);
         account.setUserId(USER_ID);
         account.setAbsoluteLimit(1000.0);
@@ -55,7 +55,7 @@ public class AccountSteps extends Base {
 
             //Store the created iban for future usage
             BankAccount createdAccount = objectMapper.readValue(responseEntity.getBody(), BankAccount.class);
-            StateSingleton.getInstance().setCreated_iban(createdAccount.getIban());
+            StateSingleton.getInstance().setCreatedIban(createdAccount.getIban());
         } catch (HttpClientErrorException ex){
             StateSingleton.getInstance().setHttpClientErrorException(ex);
         }
@@ -64,7 +64,7 @@ public class AccountSteps extends Base {
     @When("Ik een bestaand account inactief maak")
     public void ikEenBestaandAccountInactiefMaak() throws URISyntaxException {
         //URI to send the request to
-        URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreated_iban());
+        URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreatedIban());
 
         //Add headers
         headers.setBearerAuth(employee_jwt);
@@ -77,7 +77,7 @@ public class AccountSteps extends Base {
     @When("Ik een bestaand en inactief account ophaal")
     public void ikEenBestaandInactiefAccountOphaal() throws URISyntaxException{
         //URI to send the request to
-        URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreated_iban());
+        URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreatedIban());
 
         //Add headers
         headers.setBearerAuth(employee_jwt);
@@ -97,11 +97,11 @@ public class AccountSteps extends Base {
     @When("Ik een bestaand account update")
     public void ikEenBestaandAccountUpdate() throws URISyntaxException, JsonProcessingException { //@TODO: Standard account object
         //The URI for the request
-        URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreated_iban());
+        URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreatedIban());
 
         //Object to send
         BankAccount account = new BankAccount();
-        account.setAccountType(AccountType.SAVINGS);
+        account.setAccountType(AccountType.REGULAR);
         account.setStatus(Status.ACTIVE);
         account.setUserId(USER_ID);
         account.setBalance(100.0);

@@ -17,9 +17,10 @@ public class StateSingleton {
     }
 
     private String jwtToken;
-    private String created_iban;
+    private String createdIban;
     private HttpClientErrorException httpClientErrorException;
     private ResponseEntity<String> responseEntity;
+    private int createdTransactionId;
 
     public String getJwtToken() {
         return jwtToken;
@@ -29,12 +30,20 @@ public class StateSingleton {
         this.jwtToken = jwtToken;
     }
 
-    public String getCreated_iban() {
-        return created_iban;
+    public String getCreatedIban() {
+        return createdIban;
     }
 
-    public void setCreated_iban(String created_iban) {
-        this.created_iban = created_iban;
+    public int getCreatedTransactionId() {
+        return createdTransactionId;
+    }
+
+    public void setCreatedTransactionId(int createdTransactionId) {
+        this.createdTransactionId = createdTransactionId;
+    }
+
+    public void setCreatedIban(String createdIban) {
+        this.createdIban = createdIban;
     }
 
     public HttpClientErrorException getHttpClientErrorException() {
