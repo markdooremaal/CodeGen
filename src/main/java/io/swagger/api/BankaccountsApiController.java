@@ -84,7 +84,7 @@ public class BankaccountsApiController implements BankaccountsApi {
             bankAccountUser.addBankAccountsItem(bankAccount);
             userService.update(bankAccountUser);
 
-            return ResponseEntity.status(HttpStatus.OK).body(bankAccount);
+            return ResponseEntity.status(HttpStatus.CREATED).body(bankAccount);
         } else {
             return new ResponseEntity<BankAccount>(HttpStatus.NOT_IMPLEMENTED);
         }

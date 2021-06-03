@@ -85,7 +85,7 @@ public class TransactionsApiController implements TransactionsApi {
                 // accountTo.setAmount(+amount)
                 transactionService.storeTransaction(transaction);
 
-                return ResponseEntity.status(HttpStatus.OK).body(transaction);
+                return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
             } catch (IllegalArgumentException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);

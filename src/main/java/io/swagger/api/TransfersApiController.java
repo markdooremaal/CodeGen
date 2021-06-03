@@ -114,7 +114,7 @@ public class TransfersApiController implements TransfersApi {
                 transferService.storeTransfer(transfer);
                 userService.update(accountHolder);
             }
-            return ResponseEntity.status(HttpStatus.OK).body(transfer);
+            return ResponseEntity.status(HttpStatus.CREATED).body(transfer);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
