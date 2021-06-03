@@ -70,7 +70,7 @@ public class TransferApiController implements TransferApi {
      */
     public ResponseEntity<Transfer> getTransferById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transfer to get", required = true, schema = @Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             Transfer transfer = transferService.getTransferById(id);
 
             if (transfer == null)

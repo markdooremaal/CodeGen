@@ -86,7 +86,7 @@ public class BankaccountApiController implements BankaccountApi {
 
     public ResponseEntity<BankAccount> getAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to get", required = true, schema = @Schema()) @PathVariable("id") String id) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             if (id.equals("nl01inho0000000001"))
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to view account");
 
@@ -111,7 +111,7 @@ public class BankaccountApiController implements BankaccountApi {
 
     public ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required = true, schema = @Schema()) @PathVariable("id") String id, @Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required = true, schema = @Schema()) @Valid @RequestBody BankAccount body) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             User user = userService.findByToken(tokenProvider.resolveToken(request));
 
             if (user.getRole() == Role.CUSTOMER)

@@ -67,7 +67,7 @@ public class BankaccountsApiController implements BankaccountsApi {
 
     public ResponseEntity<BankAccount> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required = true, schema = @Schema()) @Valid @RequestBody BankAccount body) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             User user = userService.findByToken(tokenProvider.resolveToken(request));
             if (user.getRole() == Role.CUSTOMER)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only bank employees are allowed to create accounts.");
@@ -92,7 +92,7 @@ public class BankaccountsApiController implements BankaccountsApi {
 
     public ResponseEntity<ArrayOfBankAccounts> getAllAccounts(@Parameter(in = ParameterIn.QUERY, description = "Get all the accounts for a specific user", schema = @Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             User user = userService.findByToken(tokenProvider.resolveToken(request));
             ArrayOfBankAccounts bankAccounts = new ArrayOfBankAccounts();
 

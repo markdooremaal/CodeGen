@@ -70,7 +70,7 @@ public class TransfersApiController implements TransfersApi {
 
     public ResponseEntity<Transfer> createTransfer(@Parameter(in = ParameterIn.DEFAULT, description = "Transfer object", required = true, schema = @Schema()) @Valid @RequestBody Transfer body) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
 
             BankAccount bankAccount = bankAccountService.getBankAccountByIban(body.getAccount());
             User user = userService.findByToken(tokenProvider.resolveToken(request));
@@ -123,7 +123,7 @@ public class TransfersApiController implements TransfersApi {
     public ResponseEntity<ArrayOfTransfers> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user", schema = @Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp = "^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "account", required = false) String account, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema(allowableValues = {"deposit", "withdrawal"}
     )) @Valid @RequestParam(value = "type", required = false) String type, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             User user = userService.findByToken(tokenProvider.resolveToken(request));
             ArrayOfBankAccounts bankAccounts = new ArrayOfBankAccounts();
             ArrayOfTransfers transfers = transferService.getAllTransfers();

@@ -67,7 +67,7 @@ public class TransactionApiController implements TransactionApi {
      */
     public ResponseEntity<Transaction> getTransactionById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transaction to get", required = true, schema = @Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             Transaction transaction = transactionService.getTransactionById(id);
 
             if (transaction == null)

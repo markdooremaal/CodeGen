@@ -70,7 +70,7 @@ public class TransactionsApiController implements TransactionsApi {
 
     public ResponseEntity<Transaction> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required = true, schema = @Schema()) @Valid @RequestBody Transaction body) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             try {
                 Transaction transaction = new Transaction();
                 transaction.setAccountFrom(body.getAccountFrom()); // :TODO Check if accounts exists. Also need a function to get account object based on iban
@@ -97,7 +97,7 @@ public class TransactionsApiController implements TransactionsApi {
 
     public ResponseEntity<ArrayOfTransactions> getAllTransactions(@RequestParam Map<String, String> params) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+        if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             ArrayOfTransactions transactions = new ArrayOfTransactions();
             Role role = tokenProvider.getRole(tokenProvider.resolveToken(request));
 
