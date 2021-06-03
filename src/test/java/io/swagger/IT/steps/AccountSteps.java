@@ -87,10 +87,11 @@ public class AccountSteps extends Base {
         URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreated_iban());
 
         BankAccount account = new BankAccount();
-        account.setIban(StateSingleton.getInstance().getCreated_iban());
         account.setAccountType(AccountType.SAVINGS);
         account.setStatus(Status.ACTIVE);
         account.setUserId(USER_ID);
+        account.setBalance(100.0);
+        account.setAbsoluteLimit(100.0);
 
         headers.setBearerAuth(employee_jwt);
         headers.setContentType(MediaType.APPLICATION_JSON);

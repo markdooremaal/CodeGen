@@ -76,9 +76,6 @@ public class BankaccountApiController implements BankaccountApi {
         if (bankAccount == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccount found with this id");
 
-        if (!user.getBankAccounts().contains(bankAccount))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not own bankAccout");
-
         bankAccount.setStatus(Status.INACTIVE);
         bankAccountService.updateBankAccount(bankAccount);
         return new ResponseEntity<Void>(HttpStatus.OK);
