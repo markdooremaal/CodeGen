@@ -1,12 +1,11 @@
 package io.swagger.IT.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.swagger.model.dto.LoginDTO;
-import io.swagger.model.JwtToken_Singleton;
+import io.swagger.model.StateSingleton;
 import io.swagger.model.User;
 import io.swagger.model.enums.Status;
 import org.json.JSONException;
@@ -14,36 +13,20 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class UserSteps {
-
-    private HttpHeaders headers = new HttpHeaders();
-    private String baseUrl = "http://localhost:8080/";
-    private RestTemplate template = new RestTemplate();
-    private ResponseEntity<String> responseEntity;
-    private ObjectMapper objectMapper = new ObjectMapper();
-    private final int USER_ID = 2;
+public class UserSteps extends Base{
 
     @When("Ik alle users ophaal")
     public void ikAlleUsersOphaal() throws URISyntaxException {
         URI uri = new URI(baseUrl + "users");
-        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
 
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        responseEntity = template.exchange(uri, HttpMethod.GET, entity, String.class);
-
-        System.out.println(responseEntity.getBody());
-    }
-
-    @Then("Is de status van het request {int}")
-    public void isDeStatusVanHetRequest(int expected) {
-        int response = responseEntity.getStatusCodeValue();
-        Assert.assertEquals(expected, response);
+        StateSingleton.getInstance().setResponseEntity(template.exchange(uri, HttpMethod.GET, entity, String.class));
     }
 
     @When("Ik inlog met {string} {string}")
@@ -55,17 +38,19 @@ public class UserSteps {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(loginLoginDTO), headers);
-        responseEntity = template.postForEntity(uri, entity, String.class);
+        StateSingleton.getInstance().setResponseEntity(template.postForEntity(uri, entity, String.class));
     }
 
     @Then("Krijg ik een jwt token")
     public void krijgIkEenJwtToken() throws JSONException {
-        JSONObject jsonToken = new JSONObject(responseEntity.getBody());
+        JSONObject jsonToken = new JSONObject(StateSingleton.getInstance().getResponseEntity().getBody());
         String token = jsonToken.getString("token");
 
         Assert.assertNotNull(token);
 
-        JwtToken_Singleton.getInstance().setJwtToken(token);
+        //if()
+
+        StateSingleton.getInstance().setJwtToken(token);
     }
 
     @When("Ik een nieuwe user aanmaak")
@@ -80,44 +65,39 @@ public class UserSteps {
         user.setPassword("test");
 
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
 
         try{
             HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(user), headers);
-            responseEntity = template.postForEntity(uri, entity, String.class);
+            StateSingleton.getInstance().setResponseEntity(template.postForEntity(uri, entity, String.class));
         } catch (HttpClientErrorException ex){
-            JwtToken_Singleton.getInstance().setHttpClientErrorException(ex);
+            StateSingleton.getInstance().setHttpClientErrorException(ex);
         }
-    }
-
-    @Then("Krijg ik een error {int}")
-    public void krijgIkEenError(int statusCode) {
-        Assert.assertEquals(statusCode, JwtToken_Singleton.getInstance().getHttpClientErrorException().getRawStatusCode());
     }
 
     @When("Ik een bestaande user inactief maak")
     public void ikEenBestaandeUserInactiefMaak() throws URISyntaxException {
         URI uri = new URI(baseUrl + "user/" + USER_ID);
 
-        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
 
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        responseEntity = template.exchange(uri, HttpMethod.DELETE, entity, String.class);
+        StateSingleton.getInstance().setResponseEntity(template.exchange(uri, HttpMethod.DELETE, entity, String.class));
     }
 
     @When("Ik een bestaande en inactieve user ophaal")
     public void ikEenBestaandeInactieveUserOphaal() throws URISyntaxException{
         URI uri = new URI(baseUrl + "user/" + USER_ID);
 
-        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
 
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        responseEntity = template.exchange(uri, HttpMethod.GET, entity, String.class);
+        StateSingleton.getInstance().setResponseEntity(template.exchange(uri, HttpMethod.GET, entity, String.class));
     }
 
     @And("Is de status van de gebruiker inactive")
     public void isDeStatusVanDeGebruikerInactive() throws IOException {
-        User user = objectMapper.readValue(responseEntity.getBody(), User.class);
+        User user = objectMapper.readValue(StateSingleton.getInstance().getResponseEntity().getBody(), User.class);
         Assert.assertEquals(Status.INACTIVE, user.getStatus());
     }
 
@@ -131,11 +111,11 @@ public class UserSteps {
         user.setEmail("john@doe.com");
         user.setPassword("test");
 
-        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(user), headers);
-        responseEntity = template.exchange(uri, HttpMethod.PUT, entity, String.class);
+        StateSingleton.getInstance().setResponseEntity(template.exchange(uri, HttpMethod.PUT, entity, String.class));
     }
 
     @When("Ik een niet bestaande user update")
@@ -148,14 +128,14 @@ public class UserSteps {
         user.setEmail("john@doe.com");
         user.setPassword("test");
 
-        headers.setBearerAuth(JwtToken_Singleton.getInstance().getJwtToken());
+        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         try{
             HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(user), headers);
-            responseEntity = template.exchange(uri, HttpMethod.PUT, entity, String.class);
+            StateSingleton.getInstance().setResponseEntity(template.exchange(uri, HttpMethod.PUT, entity, String.class));
         } catch (HttpClientErrorException ex){
-            JwtToken_Singleton.getInstance().setHttpClientErrorException(ex);
+            StateSingleton.getInstance().setHttpClientErrorException(ex);
         }
     }
 }

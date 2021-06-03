@@ -51,6 +51,17 @@ public class SeederService {
         mark.setTransactionLimit(10.00);
         userService.add(mark);
 
+        User employee = new User();
+        employee.setEmail("employee@bank.nl");
+        employee.setPassword(("test"));
+        employee.setDayLimit(10.00);
+        employee.setStatus(Status.ACTIVE);
+        employee.setRole(Role.EMPLOYEE);
+        employee.setLastName("Jake");
+        employee.setFirstName("the Snake");
+        employee.setTransactionLimit(10.00);
+        userService.add(employee);
+
         User bank = new User();
         bank.setEmail("info@inhollandbank.com");
         bank.setPassword("39282y7whorfznffuailfw8hf23AHDS*(A(Hf98eh");
