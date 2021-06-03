@@ -85,7 +85,7 @@ public class TransfersApiController implements TransfersApi {
             transfer.setAccount(body.getAccount());
             transfer.setType(body.getType());
             transfer.setAmount(body.getAmount());
-            transfer.setUserPerforming(user.getId());
+            transfer.setUserPerforming(body.getUserPerforming());
 
             if (transfer.getType() == Type.DEPOSIT) {
                 bankAccount.setBalance(bankAccount.getBalance() + transfer.getAmount());

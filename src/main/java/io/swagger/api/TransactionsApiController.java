@@ -3,9 +3,11 @@ package io.swagger.api;
 import io.swagger.model.ArrayOfTransactions;
 import io.swagger.model.BankAccount;
 import io.swagger.model.User;
+import io.swagger.model.enums.AccountType;
 import io.swagger.model.enums.Role;
 import io.swagger.security.JwtTokenFilter;
 import io.swagger.security.JwtTokenProvider;
+import io.swagger.service.BankAccountService;
 import io.swagger.service.TransactionService;
 import io.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,8 @@ public class TransactionsApiController implements TransactionsApi {
     private JwtTokenProvider tokenProvider;
     @Autowired
     private UserService userService;
+    @Autowired
+    private BankAccountService bankAccountService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -89,7 +93,47 @@ public class TransactionsApiController implements TransactionsApi {
             } catch (IllegalArgumentException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+            BankAccount bankAccountFrom = bankAccountService.getBankAccountByIban(body.getAccountFrom());
+            BankAccount bankAccountTo = bankAccountService.getBankAccountByIban(body.getAccountTo());
+
+            if (bankAccountFrom.getAccountType() == AccountType.SAVINGS && bankAccountTo.getUserId() != bankAccountFrom.getUserId())
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Can not transfer to foreign account from savings account");
+
+            if (bankAccountTo.getAccountType() == AccountType.SAVINGS && bankAccountFrom.getUserId() != bankAccountTo.getUserId())
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Can not transfer directly to foreign savings account");
+
+            User userPerforming = userService.findByToken(tokenProvider.resolveToken(request));
+            User userFrom = userService.findById(bankAccountFrom.getUserId());
+            User userTo = userService.findById(bankAccountTo.getUserId());
+
+            Transaction transaction = new Transaction();
+            transaction.setAccountFrom(bankAccountFrom.getIban());
+            transaction.setAccountTo(bankAccountTo.getIban());
+            transaction.userPerforming(body.getUserPerforming());
+            transaction.setAmount(body.getAmount());
+
+            if (userPerforming.getRole() == Role.CUSTOMER) {
+
+                if (transaction.getAmount() > userFrom.getTransactionLimit())
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Transaction limit would be exceeded");
+
+                Double newCurrentDayLimit = userFrom.getCurrentDayLimit() + transaction.getAmount();
+                if (newCurrentDayLimit > userFrom.getDayLimit())
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Day limit would be exceeded");
             }
+
+            Double newBalance = bankAccountFrom.getBalance() - transaction.getAmount();
+            if (newBalance <= bankAccountFrom.getAbsoluteLimit())
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Accounts absolute limit would be exceeded");
+
+            bankAccountFrom.setBalance(bankAccountFrom.getBalance() - transaction.getAmount());
+            bankAccountTo.setBalance(bankAccountTo.getBalance() + transaction.getAmount());
+            bankAccountService.updateBankAccount(bankAccountFrom);
+            bankAccountService.updateBankAccount(bankAccountTo);
+            transactionService.storeTransaction(transaction);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
@@ -99,12 +143,11 @@ public class TransactionsApiController implements TransactionsApi {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             ArrayOfTransactions transactions = new ArrayOfTransactions();
-            Role role = tokenProvider.getRole(tokenProvider.resolveToken(request));
+            User user = userService.findByToken(tokenProvider.resolveToken(request));
 
-            if (role == Role.EMPLOYEE) {
+            if (user.getRole() == Role.EMPLOYEE) {
                 transactions = transactionService.getAllTransactions();
-            } else if (role == Role.CUSTOMER) {
-                User user = userService.findByToken(tokenProvider.resolveToken(request));
+            } else if (user.getRole() == Role.CUSTOMER) {
 
                 for (BankAccount bankAccount : user.getBankAccounts()) {
                     List<Transaction> accountTransactions = transactionService.getTransactionsForUser(bankAccount.getIban());
@@ -142,7 +185,7 @@ public class TransactionsApiController implements TransactionsApi {
              * Only show transactions where the IBAN-From or IBAN-To matches query
              * Only available if user is an employee
              */
-            if (params.containsKey("ibanToOrFrom") && role == Role.EMPLOYEE) {
+            if (params.containsKey("ibanToOrFrom") && user.getRole() == Role.EMPLOYEE) {
                 transactions = transactions.stream().filter(
                         t -> params.get("ibanToOrFrom").equals(t.getAccountFrom())
                                 || params.get("ibanToOrFrom").equals(t.getAccountTo())).collect(Collectors.toCollection(ArrayOfTransactions::new));
@@ -152,7 +195,7 @@ public class TransactionsApiController implements TransactionsApi {
              * Filter based on the user performing the transaction
              * Only available if user is an employee
              */
-            if (params.containsKey("userPerforming") && role == Role.EMPLOYEE) {
+            if (params.containsKey("userPerforming") && user.getRole() == Role.EMPLOYEE) {
                 Integer userPerforming = Integer.parseInt(params.get("userPerforming"));
                 transactions = transactions.stream().filter(
                         t -> userPerforming.equals(t.getUserPerforming())).collect(Collectors.toCollection(ArrayOfTransactions::new));
