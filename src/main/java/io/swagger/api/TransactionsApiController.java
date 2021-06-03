@@ -5,6 +5,7 @@ import io.swagger.model.BankAccount;
 import io.swagger.model.User;
 import io.swagger.model.enums.AccountType;
 import io.swagger.model.enums.Role;
+import io.swagger.model.enums.Status;
 import io.swagger.security.JwtTokenFilter;
 import io.swagger.security.JwtTokenProvider;
 import io.swagger.service.BankAccountService;
@@ -79,15 +80,22 @@ public class TransactionsApiController implements TransactionsApi {
             BankAccount bankAccountFrom = bankAccountService.getBankAccountByIban(body.getAccountFrom());
             BankAccount bankAccountTo = bankAccountService.getBankAccountByIban(body.getAccountTo());
 
+            if (bankAccountFrom.getStatus() == Status.INACTIVE || bankAccountTo.getStatus() == Status.INACTIVE)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Trying to send to/from inactive account");
+
+            User userPerforming = userService.findByToken(tokenProvider.resolveToken(request));
+            User userFrom = userService.findById(bankAccountFrom.getUserId());
+            User userTo = userService.findById(bankAccountTo.getUserId());
+
+            if (userPerforming.getRole() == Role.CUSTOMER && userPerforming.getId() != bankAccountFrom.getUserId())
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "User does not own account");
+
             if (bankAccountFrom.getAccountType() == AccountType.SAVINGS && bankAccountTo.getUserId() != bankAccountFrom.getUserId())
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Can not transfer to foreign account from savings account");
 
             if (bankAccountTo.getAccountType() == AccountType.SAVINGS && bankAccountFrom.getUserId() != bankAccountTo.getUserId())
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Can not transfer directly to foreign savings account");
 
-            User userPerforming = userService.findByToken(tokenProvider.resolveToken(request));
-            User userFrom = userService.findById(bankAccountFrom.getUserId());
-            User userTo = userService.findById(bankAccountTo.getUserId());
 
             Transaction transaction = new Transaction();
             transaction.setAccountFrom(bankAccountFrom.getIban());

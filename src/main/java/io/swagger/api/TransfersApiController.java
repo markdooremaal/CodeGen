@@ -3,6 +3,7 @@ package io.swagger.api;
 import io.swagger.model.*;
 import io.swagger.model.enums.AccountType;
 import io.swagger.model.enums.Role;
+import io.swagger.model.enums.Status;
 import io.swagger.model.enums.Type;
 import io.swagger.security.JwtTokenProvider;
 import io.swagger.service.BankAccountService;
@@ -74,6 +75,9 @@ public class TransfersApiController implements TransfersApi {
 
             BankAccount bankAccount = bankAccountService.getBankAccountByIban(body.getAccount());
             User user = userService.findByToken(tokenProvider.resolveToken(request));
+
+            if (bankAccount.getStatus() == Status.INACTIVE)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account inactive");
 
             if (bankAccount.getAccountType() == AccountType.SAVINGS)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Can't create a transfer for a savings account");
