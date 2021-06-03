@@ -4,6 +4,8 @@ import io.cucumber.java.en.Then;
 import io.swagger.model.StateSingleton;
 import org.junit.Assert;
 
+//Class with Steps that are used in multiple features
+//The error or response is stored in the singleton so they can be accessed from here
 public class UniversalSteps{
     @Then("Krijg ik een error {int}")
     public void krijgIkEenError(int statusCode) {
