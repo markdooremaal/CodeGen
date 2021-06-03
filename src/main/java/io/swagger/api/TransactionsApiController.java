@@ -75,24 +75,6 @@ public class TransactionsApiController implements TransactionsApi {
     public ResponseEntity<Transaction> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required = true, schema = @Schema()) @Valid @RequestBody Transaction body) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
-            try {
-                Transaction transaction = new Transaction();
-                transaction.setAccountFrom(body.getAccountFrom()); // :TODO Check if accounts exists. Also need a function to get account object based on iban
-                transaction.setAccountTo(body.getAccountTo());
-                transaction.userPerforming(body.getUserPerforming());
-                transaction.setAmount(body.getAmount());
-
-                // if amount <= user.daylimit && amount <= user.transactionLimit && amount <= accountFrom.amount
-                // if !(acountFrom.amount - amount) <= acountFrom.absoluteLimit
-                // accountFrom.setAmount(-amount)
-                // else abort
-                // accountTo.setAmount(+amount)
-                transactionService.storeTransaction(transaction);
-
-                return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
-            } catch (IllegalArgumentException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
 
             BankAccount bankAccountFrom = bankAccountService.getBankAccountByIban(body.getAccountFrom());
             BankAccount bankAccountTo = bankAccountService.getBankAccountByIban(body.getAccountTo());
