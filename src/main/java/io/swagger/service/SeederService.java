@@ -101,6 +101,13 @@ public class SeederService {
         bank.addBankAccountsItem(mainAccount);
         userService.update(bank);
 
+        Transaction fromBramSavingsToBramRegular = new Transaction();
+        fromBramSavingsToBramRegular.setAccountFrom(bramRegular.getIban());
+        fromBramSavingsToBramRegular.setAccountTo(bramSavings.getIban());
+        fromBramSavingsToBramRegular.userPerforming(bram.getId());
+        fromBramSavingsToBramRegular.setAmount(100.0);
+        transactionService.storeTransaction(fromBramSavingsToBramRegular);
+
         Transaction fromBramToMark = new Transaction();
         fromBramToMark.setAccountFrom(bramRegular.getIban());
         fromBramToMark.setAccountTo(markRegular.getIban());

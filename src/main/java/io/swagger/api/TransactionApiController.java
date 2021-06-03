@@ -2,7 +2,11 @@ package io.swagger.api;
 
 import io.swagger.model.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.User;
+import io.swagger.model.enums.Role;
+import io.swagger.security.JwtTokenProvider;
 import io.swagger.service.TransactionService;
+import io.swagger.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -46,7 +50,11 @@ public class TransactionApiController implements TransactionApi {
     private final HttpServletRequest request;
 
     @Autowired
-    TransactionService transactionService;
+    private TransactionService transactionService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -56,7 +64,6 @@ public class TransactionApiController implements TransactionApi {
 
     /**
      * Display the specified transaction.
-     * :TODO Check if role == employee else user needs to be sender or receiver.
      */
     public ResponseEntity<Transaction> getTransactionById(@Parameter(in = ParameterIn.PATH, description = "Numeric ID of the transaction to get", required = true, schema = @Schema()) @PathVariable("id") Integer id) {
         String accept = request.getHeader("Accept");
@@ -66,7 +73,17 @@ public class TransactionApiController implements TransactionApi {
             if (transaction == null)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transaction found with this id");
 
-            return ResponseEntity.status(HttpStatus.OK).body(transaction);
+            User user = userService.findByToken(tokenProvider.resolveToken(request));
+
+            if (user.getRole() == Role.EMPLOYEE)
+                return ResponseEntity.status(HttpStatus.OK).body(transaction);
+
+            if (user.getBankAccounts().stream().anyMatch(bankAccount -> bankAccount.getIban() == transaction.getAccountFrom())
+                    || user.getBankAccounts().stream().anyMatch(bankAccount -> bankAccount.getIban() == transaction.getAccountTo())) {
+                return ResponseEntity.status(HttpStatus.OK).body(transaction);
+            } else {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to view transaction");
+            }
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return type not accepted");
         }
