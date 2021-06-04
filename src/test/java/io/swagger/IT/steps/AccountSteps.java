@@ -45,7 +45,7 @@ public class AccountSteps extends Base {
 
         //Add headers
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(employee_jwt);
+        headers.setBearerAuth(EMPLOYEE_JWT);
 
         try{
             //Send the request, store results
@@ -67,7 +67,7 @@ public class AccountSteps extends Base {
         URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreatedIban());
 
         //Add headers
-        headers.setBearerAuth(employee_jwt);
+        headers.setBearerAuth(EMPLOYEE_JWT);
 
         //Send the request and store the results
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -80,7 +80,7 @@ public class AccountSteps extends Base {
         URI uri = new URI(baseUrl + "bankaccount/" + StateSingleton.getInstance().getCreatedIban());
 
         //Add headers
-        headers.setBearerAuth(employee_jwt);
+        headers.setBearerAuth(EMPLOYEE_JWT);
 
         //Send the request and store the results
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -101,14 +101,14 @@ public class AccountSteps extends Base {
 
         //Object to send
         BankAccount account = new BankAccount();
-        account.setAccountType(AccountType.REGULAR);
+        account.setAccountType(AccountType.SAVINGS);
         account.setStatus(Status.ACTIVE);
         account.setUserId(USER_ID);
         account.setBalance(100.0);
         account.setAbsoluteLimit(100.0);
 
         //Set headers
-        headers.setBearerAuth(employee_jwt);
+        headers.setBearerAuth(EMPLOYEE_JWT);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         //Send the request and store the results
@@ -128,7 +128,7 @@ public class AccountSteps extends Base {
         account.setUserId(USER_ID);
 
         //Set headers
-        headers.setBearerAuth(employee_jwt);
+        headers.setBearerAuth(EMPLOYEE_JWT);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         try{

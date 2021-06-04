@@ -32,34 +32,34 @@ public class SeederService {
         User bram = new User();
         bram.setEmail("bram@bramsierhuis.nl");
         bram.setPassword(("test"));
-        bram.setDayLimit(20.00);
+        bram.setDayLimit(1000.00);
         bram.setStatus(Status.ACTIVE);
         bram.setRole(Role.CUSTOMER);
         bram.setLastName("Sierhuis");
         bram.setFirstName("Bram");
-        bram.setTransactionLimit(10.00);
+        bram.setTransactionLimit(100.00);
         userService.add(bram);
 
         User mark = new User();
         mark.setEmail("mark@gmail.com");
         mark.setPassword(("test"));
-        mark.setDayLimit(10.00);
+        mark.setDayLimit(1000.00);
         mark.setStatus(Status.ACTIVE);
         mark.setRole(Role.EMPLOYEE);
         mark.setLastName("van Dooremaal");
         mark.setFirstName("Mark");
-        mark.setTransactionLimit(10.00);
+        mark.setTransactionLimit(100.00);
         userService.add(mark);
 
         User employee = new User();
         employee.setEmail("employee@bank.nl");
         employee.setPassword(("test"));
-        employee.setDayLimit(10.00);
+        employee.setDayLimit(1000.00);
         employee.setStatus(Status.ACTIVE);
         employee.setRole(Role.EMPLOYEE);
         employee.setLastName("Jake");
         employee.setFirstName("the Snake");
-        employee.setTransactionLimit(10.00);
+        employee.setTransactionLimit(100.00);
         userService.add(employee);
 
         User bank = new User();
@@ -83,7 +83,7 @@ public class SeederService {
         bramRegular.setUserId(bram.getId());
         bramRegular.setStatus(Status.ACTIVE);
         bramRegular.setAccountType(AccountType.REGULAR);
-        bramRegular.balance(500.0);
+        bramRegular.balance(20.0);
         bramRegular.absoluteLimit(-1000.0);
         bankAccountService.storeBankAccount(bramRegular);
 
@@ -92,16 +92,25 @@ public class SeederService {
         bramSavings.setUserId(bram.getId());
         bramSavings.setStatus(Status.ACTIVE);
         bramSavings.setAccountType(AccountType.SAVINGS);
-        bramSavings.balance(12000.0);
+        bramSavings.balance(20.0);
         bramSavings.absoluteLimit(0.0);
         bankAccountService.storeBankAccount(bramSavings);
+
+        BankAccount bramInactive = new BankAccount();
+        bramInactive.setIban("nl01inho5500000001");
+        bramInactive.setUserId(bram.getId());
+        bramInactive.setStatus(Status.INACTIVE);
+        bramInactive.setAccountType(AccountType.REGULAR);
+        bramInactive.balance(20.0);
+        bramInactive.absoluteLimit(0.0);
+        bankAccountService.storeBankAccount(bramInactive);
 
         BankAccount markRegular = new BankAccount();
         markRegular.setIban("nl01inho3300000001");
         markRegular.setUserId(mark.getId());
         markRegular.setStatus(Status.ACTIVE);
         markRegular.setAccountType(AccountType.REGULAR);
-        markRegular.balance(320.0);
+        markRegular.balance(20.0);
         markRegular.absoluteLimit(-100.0);
         bankAccountService.storeBankAccount(markRegular);
 
@@ -110,12 +119,13 @@ public class SeederService {
         markSavings.setUserId(mark.getId());
         markSavings.setStatus(Status.ACTIVE);
         markSavings.setAccountType(AccountType.SAVINGS);
-        markSavings.balance(320.0);
+        markSavings.balance(20.0);
         markSavings.absoluteLimit(-100.0);
         bankAccountService.storeBankAccount(markSavings);
 
         bram.addBankAccountsItem(bramRegular);
         bram.addBankAccountsItem(bramSavings);
+        bram.addBankAccountsItem(bramInactive);
         userService.update(bram);
 
         mark.addBankAccountsItem(markRegular);

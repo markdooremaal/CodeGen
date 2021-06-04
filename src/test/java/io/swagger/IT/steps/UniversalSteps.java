@@ -9,7 +9,13 @@ import org.junit.Assert;
 public class UniversalSteps{
     @Then("Krijg ik een error {int}")
     public void krijgIkEenError(int statusCode) {
-        Assert.assertEquals(statusCode, StateSingleton.getInstance().getHttpClientErrorException().getRawStatusCode());
+        //Temp store exception
+        int code = StateSingleton.getInstance().getHttpClientErrorException().getRawStatusCode();
+
+        //Reset exception
+        StateSingleton.getInstance().setHttpClientErrorException(null);
+
+        Assert.assertEquals(statusCode, code);
     }
 
     @Then("Is de status van het request {int}")
