@@ -58,9 +58,6 @@ public class UserSteps extends Base{
 
         //Make sure the token isset
         Assert.assertNotNull(token);
-
-        //Store the token
-        StateSingleton.getInstance().setJwtToken(token);
     }
 
     @When("Ik een nieuwe user aanmaak")
