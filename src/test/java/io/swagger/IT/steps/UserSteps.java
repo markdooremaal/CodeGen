@@ -25,7 +25,7 @@ public class UserSteps extends Base{
     public void ikAlleUsersOphaal() throws URISyntaxException {
         //URI to send the request to
         URI uri = new URI(baseUrl + "users");
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         //Send the request and store the response
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -78,7 +78,7 @@ public class UserSteps extends Base{
 
         //Add headers
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         try{
             //Send the request and store the response
@@ -95,7 +95,7 @@ public class UserSteps extends Base{
         URI uri = new URI(baseUrl + "user/" + USER_ID);
 
         //Add headers
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         //Send the request and store the response
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -108,7 +108,7 @@ public class UserSteps extends Base{
         URI uri = new URI(baseUrl + "user/" + USER_ID);
 
         //Add headers
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         //Send the request and store the response
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -135,7 +135,7 @@ public class UserSteps extends Base{
         user.setPassword("test");
 
         //Add headers
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         //Send the request and store the response
@@ -156,7 +156,7 @@ public class UserSteps extends Base{
         user.setPassword("test");
 
         //Add headers
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         try{

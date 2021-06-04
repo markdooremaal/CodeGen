@@ -23,7 +23,7 @@ public class TransactionSteps extends Base {
         URI uri = new URI(baseUrl + "transactions");
 
         //Add token to the request
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         //Create entitiy with headers and send the request, store the response
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -108,7 +108,7 @@ public class TransactionSteps extends Base {
 
         //Add headers
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         makeTransaction(transaction);
     }
@@ -124,7 +124,7 @@ public class TransactionSteps extends Base {
 
         //Add headers
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(EMPLOYEE_JWT);
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         makeTransaction(transaction);
     }
@@ -136,7 +136,7 @@ public class TransactionSteps extends Base {
         transaction.setAccountFrom(REGULAR1_IBAN);
         transaction.setAccountTo(REGULAR2_IBAN);
         transaction.userPerforming(USER1); //@TODO REmove
-        transaction.setAmount(990.0);
+        transaction.setAmount(9900.0);
 
         //Add headers
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -156,7 +156,7 @@ public class TransactionSteps extends Base {
 
         //Add headers
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(EMPLOYEE_JWT);
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         makeTransaction(transaction);
     }

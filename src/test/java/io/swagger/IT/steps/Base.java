@@ -22,4 +22,5 @@ public class Base {
     protected final String INACTIVE1_IBAN = "nl01inho5500000001";
 
     protected final String EMPLOYEE_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJrQGdtYWlsLmNvbSIsImF1dGgiOiJlbXBsb3llZSIsImlhdCI6MTYyMjcxNjY5NSwiZXhwIjoxNjMyNzE2Njk1fQ.Qp8J4MwIbSsYUuMrlEPJZU9VCVKmnQk1dnIJ0u1HPpo";
+    protected final String CUSTOMER_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJicmFtQGJyYW1zaWVyaHVpcy5ubCIsImF1dGgiOiJjdXN0b21lciIsImlhdCI6MTYyMjgxOTcxMSwiZXhwIjoxNjU4ODE5NzExfQ.e76Vz6Tod9IwfCrJ4ZO6EzndmH_ggTSNX3N9sUhSeiQ";
 }

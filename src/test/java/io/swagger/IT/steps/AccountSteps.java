@@ -24,7 +24,7 @@ public class AccountSteps extends Base {
         URI uri = new URI(baseUrl + "bankaccounts");
 
         //Add token to the request
-        headers.setBearerAuth(StateSingleton.getInstance().getJwtToken());
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         //Create entitiy with headers and send the request, store the response
         HttpEntity<String> entity = new HttpEntity<>(null, headers);

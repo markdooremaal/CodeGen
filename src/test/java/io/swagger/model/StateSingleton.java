@@ -3,7 +3,6 @@ package io.swagger.model;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
-//@TODO: Implement a world
 public class StateSingleton {
     private static StateSingleton instance = new StateSingleton();
 
@@ -16,19 +15,11 @@ public class StateSingleton {
         return instance;
     }
 
-    private String jwtToken;
     private String createdIban;
     private HttpClientErrorException httpClientErrorException;
     private ResponseEntity<String> responseEntity;
     private int createdTransactionId;
-
-    public String getJwtToken() {
-        return jwtToken;
-    }
-
-    public void setJwtToken(String jwtToken) {
-        this.jwtToken = jwtToken;
-    }
+    private int createdTransferId;
 
     public String getCreatedIban() {
         return createdIban;
@@ -44,6 +35,14 @@ public class StateSingleton {
 
     public void setCreatedIban(String createdIban) {
         this.createdIban = createdIban;
+    }
+
+    public int getCreatedTransferId() {
+        return createdTransferId;
+    }
+
+    public void setCreatedTransferId(int createdTransferId) {
+        this.createdTransferId = createdTransferId;
     }
 
     public HttpClientErrorException getHttpClientErrorException() {
