@@ -1,8 +1,11 @@
 openapi: 3.0.0
 servers:
-  - url: localhost:8080
+  - description: Production url
+    url: https://projectcodegen.herokuapp.com
+  - description: Development url
+    url: http://localhost:8080
 info:
-  description: This is the API for the 2.4 Code Generation Bank application
+  description: This is the API for the 2.4 Code Generation Bank application. Id and Timestamp fields are automaticly generated and do not have to be posted.
   version: "2.0.1"
   title: Bank API
 paths:
@@ -99,7 +102,7 @@ paths:
         - Transactions and Transfers
       summary: Create a new transaction
       requestBody:
-        description: Transaction object
+        description: Transaction object. Id and timestamp field can be ignored.
         required: true
         content:
           application/json:
@@ -195,7 +198,7 @@ paths:
         - Transactions and Transfers
       summary: Create a new transfer
       requestBody:
-        description: Transfer object
+        description: Transfer object. Id and timestamp field can be ignored.
         required: true
         content:
           application/json:
@@ -415,14 +418,14 @@ paths:
         - Accounts
       summary: Create a new BankAccount
       requestBody:
-        description: Transaction object
+        description: BankAccount object. Iban can be ignored since it will be generated.
         required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/BankAccount"
       operationId: createAccount
-      description: Calling this allows you to create a sBank Account
+      description: Calling this allows you to create a Bank Account
       responses:
         "200":
           description: Account created
@@ -472,7 +475,7 @@ paths:
         - Accounts
       summary: Update a Bank Account by IBAN
       requestBody:
-        description: BankAccount object
+        description: BankAccount object. Iban can be ignored, can not be updated.
         required: true
         content:
           application/json:

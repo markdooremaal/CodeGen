@@ -125,7 +125,7 @@ public class TransfersApiController implements TransfersApi {
     }
 
     public ResponseEntity<ArrayOfTransfers> getAllTransfers(@Parameter(in = ParameterIn.QUERY, description = "Get all the transfers for a specific user", schema = @Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId, @Pattern(regexp = "^[a-z]{2}[0-9]{2}[a-z0-9]{4}[0-9]{7}([a-z0-9]?){0,16}$") @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "account", required = false) String account, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema(allowableValues = {"deposit", "withdrawal"}
-    )) @Valid @RequestParam(value = "type", required = false) String type, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "timestamp", required = false) OffsetDateTime timestamp) {
+    )) @Valid @RequestParam(value = "type", required = false) String type, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "userPerforming", required = false) Integer userPerforming, @Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "timestamp", required = false) String timestamp) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             User user = userService.findByToken(tokenProvider.resolveToken(request));
@@ -141,6 +141,18 @@ public class TransfersApiController implements TransfersApi {
                 for (BankAccount bankAccount : bankAccounts)
                     transfers.removeIf(transfer -> transfer.getAccount().equals(bankAccount.getIban()));
             }
+
+            if (account != null)
+                transfers = transfers.stream().filter(transfer -> account.equals(transfer.getAccount())).collect(Collectors.toCollection(ArrayOfTransfers::new));
+
+            if (type != null)
+                transfers =transfers.stream().filter(transfer -> Type.valueOf(type.toUpperCase()).equals(transfer.getType())).collect(Collectors.toCollection(ArrayOfTransfers::new));
+
+            if (userPerforming != null)
+                transfers = transfers.stream().filter(transfer -> userPerforming.equals(transfer.getUserPerforming())).collect(Collectors.toCollection(ArrayOfTransfers::new));
+
+            if (timestamp != null)
+                transfers = transfers.stream().filter(transfer -> OffsetDateTime.parse(timestamp).equals(transfer.getTimestamp())).collect(Collectors.toCollection(ArrayOfTransfers::new));
 
             if (transfers.isEmpty())
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transfers found");
