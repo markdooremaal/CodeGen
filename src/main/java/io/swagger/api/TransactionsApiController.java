@@ -93,13 +93,15 @@ public class TransactionsApiController implements TransactionsApi {
             transaction.userPerforming(body.getUserPerforming());
             transaction.setAmount(body.getAmount());
 
+            Double newCurrentDayLimit = 0.0;
+
             // If the logged in user is a customer check if it's transaction and daylimit will not be exceeded.
             if (userPerforming.getRole() == Role.CUSTOMER) {
 
                 if (transaction.getAmount() > userFrom.getTransactionLimit())
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Transaction limit would be exceeded");
 
-                Double newCurrentDayLimit = userFrom.getCurrentDayLimit() + transaction.getAmount();
+                newCurrentDayLimit = userFrom.getCurrentDayLimit() + transaction.getAmount();
                 if (newCurrentDayLimit > userFrom.getDayLimit())
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Day limit would be exceeded");
             }
@@ -111,8 +113,10 @@ public class TransactionsApiController implements TransactionsApi {
 
             bankAccountFrom.setBalance(bankAccountFrom.getBalance() - transaction.getAmount());
             bankAccountTo.setBalance(bankAccountTo.getBalance() + transaction.getAmount());
+            userFrom.setCurrentDayLimit(newCurrentDayLimit);
             bankAccountService.updateBankAccount(bankAccountFrom);
             bankAccountService.updateBankAccount(bankAccountTo);
+            userService.update(userFrom);
             transactionService.storeTransaction(transaction);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
