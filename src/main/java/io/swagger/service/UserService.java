@@ -42,6 +42,7 @@ public class UserService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    //Get all users
     public ArrayOfUsers findAll(Specification<User> specification){
         List<User> users = userRepository.findAll(specification);
         return new ArrayOfUsers(users);

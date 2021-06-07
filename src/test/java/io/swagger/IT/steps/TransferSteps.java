@@ -26,7 +26,7 @@ public class TransferSteps extends Base {
         URI uri = new URI(baseUrl + "transfers");
 
         //Add token to the request
-        headers.setBearerAuth(CUSTOMER_JWT); //TODO: change to final string
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         //Create entity with headers and send the request, store the response
         HttpEntity<String> entity = new HttpEntity<>(null, headers);

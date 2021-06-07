@@ -51,14 +51,10 @@ public class UsersApiController implements UsersApi {
     public ResponseEntity<User> createUser(@Parameter(in = ParameterIn.DEFAULT, description = "User object", required=true, schema=@Schema()) @Valid @RequestBody User body) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json")) || accept.contains("*/*")) {
-            try{
-                User addedUser = userService.add(body); //@TODO: error checking
-                return new ResponseEntity<User>(addedUser, HttpStatus.CREATED);
-            } catch (ResponseStatusException responseStatusException){
-                return new ResponseEntity<User>(HttpStatus.CONFLICT);
-            }
+            User addedUser = userService.add(body);
+            return new ResponseEntity<User>(addedUser, HttpStatus.CREATED);
         } else{
-            return new ResponseEntity<User>(HttpStatus.NOT_ACCEPTABLE);
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Accept hadder invalid");
         }
     }
     //endregion
@@ -69,7 +65,6 @@ public class UsersApiController implements UsersApi {
 )) @Valid @RequestParam(value = "status", required = false) String status) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
-            //ArrayOfUsers users = userService.findAll(); //@TODO: Filters
             UserSearch criteria = new UserSearch();
             if(name != null)
                 criteria.setFirstName(name);
@@ -88,11 +83,11 @@ public class UsersApiController implements UsersApi {
 
             Specification<User> specification = new UserSpecification(criteria);
             ArrayOfUsers users = userService.findAll(specification);
+
             return new ResponseEntity<ArrayOfUsers>(users, HttpStatus.OK);
         }
 
-        return new ResponseEntity<ArrayOfUsers>(HttpStatus.NOT_IMPLEMENTED);
+        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Accept hadder invalid");
     }
     //endregion
-
 }
