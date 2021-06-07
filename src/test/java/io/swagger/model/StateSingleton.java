@@ -3,6 +3,7 @@ package io.swagger.model;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
+//Singleton that tracks values used during the Cucumber tests
 public class StateSingleton {
     private static StateSingleton instance = new StateSingleton();
 

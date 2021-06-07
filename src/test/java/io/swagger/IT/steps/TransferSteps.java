@@ -116,6 +116,55 @@ public class TransferSteps extends Base {
         makeTransfer(transfer);
     }
 
+    @When("Ik een transfer maak van een savings account")
+    public void ikEenTransferMaakVanEenSavingsAccount()  throws IOException, URISyntaxException {
+        //Object to add
+        Transfer transfer = new Transfer();
+        transfer.setAccount(SAVINGS1_IBAN);
+        transfer.setAmount(10.0);
+        transfer.setType(Type.WITHDRAWAL);
+        transfer.setUserPerforming(USER1);
+
+        //Add headers
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(CUSTOMER_JWT);
+
+        makeTransfer(transfer);
+    }
+
+    @When("Ik teveel geld probeer op te nemen")
+    public void ikTeveelGeldProbeerOpTeNemen() throws IOException, URISyntaxException {
+        //Object to add
+        Transfer transfer = new Transfer();
+        transfer.setAccount(REGULAR1_IBAN);
+        transfer.setType(Type.WITHDRAWAL);
+        transfer.userPerforming(USER1);
+        transfer.setAmount(9900.0);
+
+        //Add headers
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(EMPLOYEE_JWT);
+
+        makeTransfer(transfer);
+    }
+
+    @When("Ik te veel hoge transfers uitvoer")
+    public void ikTeVeelHogeTransfersUitvoer()  throws IOException, URISyntaxException {
+        //Object to add
+        Transfer transfer = new Transfer();
+        transfer.setAccount(REGULAR1_IBAN);
+        transfer.setType(Type.WITHDRAWAL);
+        transfer.userPerforming(USER1);
+        transfer.setAmount(900.0);
+
+        //Add headers
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(EMPLOYEE_JWT);
+
+        makeTransfer(transfer);
+    }
+
+    //Function to create the transfer in the db
     private void makeTransfer(Transfer transfer) throws IOException, URISyntaxException {
         try{
             //URI to send the request to
