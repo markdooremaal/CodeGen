@@ -57,6 +57,11 @@ public class TransactionsApiController implements TransactionsApi {
         this.request = request;
     }
 
+    /**
+     * Create a new transaction
+     * @param body
+     * @return Transaction
+     */
     public ResponseEntity<Transaction> createTransaction(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required = true, schema = @Schema()) @Valid @RequestBody Transaction body) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
@@ -71,6 +76,7 @@ public class TransactionsApiController implements TransactionsApi {
             User userFrom = userService.findById(bankAccountFrom.getUserId());
             User userTo = userService.findById(bankAccountTo.getUserId());
 
+            // Perform permission checks
             if (userPerforming.getRole() == Role.CUSTOMER && userPerforming.getId() != bankAccountFrom.getUserId())
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "User does not own account");
 
@@ -87,6 +93,7 @@ public class TransactionsApiController implements TransactionsApi {
             transaction.userPerforming(body.getUserPerforming());
             transaction.setAmount(body.getAmount());
 
+            // If the logged in user is a customer check if it's transaction and daylimit will not be exceeded.
             if (userPerforming.getRole() == Role.CUSTOMER) {
 
                 if (transaction.getAmount() > userFrom.getTransactionLimit())
@@ -97,6 +104,7 @@ public class TransactionsApiController implements TransactionsApi {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Day limit would be exceeded");
             }
 
+            // Check the account absolute limit
             Double newBalance = bankAccountFrom.getBalance() - transaction.getAmount();
             if (newBalance <= bankAccountFrom.getAbsoluteLimit())
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Accounts absolute limit would be exceeded");
@@ -113,12 +121,20 @@ public class TransactionsApiController implements TransactionsApi {
         }
     }
 
+    /**
+     * Return a listing of transactions
+     * @param params
+     * @return ArrayOfTransactions
+     */
     public ResponseEntity<ArrayOfTransactions> getAllTransactions(@RequestParam Map<String, String> params) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
             ArrayOfTransactions transactions = new ArrayOfTransactions();
             User user = userService.findByToken(tokenProvider.resolveToken(request));
 
+            /** If the user is an Employee get all transactions
+             * Else return the transactions linked to the logged in users bankaccounts.
+             */
             if (user.getRole() == Role.EMPLOYEE) {
                 transactions = transactionService.getAllTransactions();
             } else if (user.getRole() == Role.CUSTOMER) {
