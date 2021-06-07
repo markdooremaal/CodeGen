@@ -16,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -38,11 +41,6 @@ public class UserService
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    /*//Get all users
-    public ArrayOfUsers findAll(){
-        return userRepository.findAll();
-    }*/
 
     public ArrayOfUsers findAll(Specification<User> specification){
         List<User> users = userRepository.findAll(specification);
@@ -84,8 +82,14 @@ public class UserService
     //Login the user
     public String login(String email, String password){
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            //Find the appropriate user
             User user = userRepository.findByEmail(email);
+
+            //Add the salt and verify password
+            String saltedPassword = password + user.getSalt();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, saltedPassword));
+
+            //Return a token
             return jwtTokenProvider.createToken(email, user.getRole());
         }
         catch(AuthenticationException ex){
@@ -96,7 +100,17 @@ public class UserService
     //Add user to the database
     public User add(User user){
         if(userRepository.findByEmail(user.getEmail()) == null) {
-            user.setPassword(passwordEncoder.encode(user.getPassword())); //TODO: Implement salt
+            //Generate a salt for the user
+            byte[] salt = new byte[16];
+            new SecureRandom().nextBytes(salt);
+            String saltString = Base64.getEncoder().encodeToString(salt);
+
+            //Append salt to the password
+            String saltedPassword = user.getPassword() + saltString;
+
+            //Set password of the user
+            user.setSalt(saltString);
+            user.setPassword(passwordEncoder.encode(saltedPassword));
 
             if(user.getRole() == null)
                 user.setRole(ROLE);

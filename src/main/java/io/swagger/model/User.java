@@ -51,6 +51,7 @@ public class User   {
   private Double dayLimit = null;
 
   private Double currentDayLimit = 0.0;
+  private String salt;
 
   @JsonProperty("transactionLimit")
   private Double transactionLimit = null;
@@ -245,6 +246,14 @@ public class User   {
   public User bankAccounts(List<BankAccount> bankAccounts) {
     this.bankAccounts = bankAccounts;
     return this;
+  }
+
+  public String getSalt() {
+    return salt;
+  }
+
+  public void setSalt(String salt) {
+    this.salt = salt;
   }
 
   public User addBankAccountsItem(BankAccount bankAccountsItem) {
