@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    //Paths that dont require a jwt token to be visited
     private static final String[] WHITELIST = {
             "/login",
             "/h2-console/**/**",
@@ -32,6 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
 
+    //Configure the filter
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 

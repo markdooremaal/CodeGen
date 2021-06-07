@@ -3,6 +3,7 @@ package io.swagger.model.searches;
 import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
 
+//Class to store search criteria for a search
 public class UserSearch
 {
     private String firstName;

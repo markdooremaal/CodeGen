@@ -1,6 +1,6 @@
 package io.swagger;
 
-import io.swagger.service.SeederService;
+import io.swagger.helper.DatabaseSeeder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
@@ -16,7 +16,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 public class Swagger2SpringBoot implements CommandLineRunner {
 
     @Autowired
-    SeederService seeder;
+    DatabaseSeeder seeder;
 
     @Override
     public void run(String... arg0) throws Exception {

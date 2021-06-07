@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.criteria.Predicate;
 
+//Class to create a search specification based on set criteria
 public class UserSpecification implements Specification<User> {
     private UserSearch criteria;
 
@@ -20,6 +21,7 @@ public class UserSpecification implements Specification<User> {
         this.criteria = criteria;
     }
 
+    //Generate the predicate
     @Override
     public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query,
                                  CriteriaBuilder cb) {

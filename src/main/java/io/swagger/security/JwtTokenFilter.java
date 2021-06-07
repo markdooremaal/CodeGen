@@ -13,29 +13,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//Class to filter requests
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    //Make sure a token is set and valid
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
 
-        try{
-            if(token != null && jwtTokenProvider.validateToken(token)){
-                Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        }
-        catch(ResponseStatusException ex){
-            SecurityContextHolder.clearContext(); //Logout user for this request
-            //httpServletResponse.sendError(ex.getRawStatusCode(), ex.getMessage()); //TODO: Show error to the client
-            httpServletResponse.sendError(ex.getStatus().value(), ex.getMessage()); //Show error to the client
-
-            //Return here so we dont go down the filter chain
-            return;
+        if(token != null && jwtTokenProvider.validateToken(token)){
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);

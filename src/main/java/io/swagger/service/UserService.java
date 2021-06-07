@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 @Service
 public class UserService
 {
+    //Default values for an user
     private final Role ROLE = Role.CUSTOMER;
     private final Status STATUS = Status.ACTIVE;
     private final Double DAY_LIMIT = 5000.00;
@@ -113,6 +114,7 @@ public class UserService
             user.setSalt(saltString);
             user.setPassword(passwordEncoder.encode(saltedPassword));
 
+            //Add default values to the object
             if(user.getRole() == null)
                 user.setRole(ROLE);
 
@@ -125,10 +127,11 @@ public class UserService
             if(user.getTransactionLimit() == null)
                 user.setTransactionLimit(TRANSACTION_LIMIT);
 
+            //Save the user to the db
             userRepository.save(user);
             return user;
         }
         else
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Username already in use");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already in use");
     }
 }

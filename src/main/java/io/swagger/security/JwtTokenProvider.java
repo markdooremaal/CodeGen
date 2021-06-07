@@ -25,6 +25,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.web.server.ResponseStatusException;
 
+//Class to create and validate JWT tokens
 @Component
 public class JwtTokenProvider {
 

@@ -3,6 +3,7 @@ package io.swagger.model.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+//Enum for the transfer type
 public enum Type {
     DEPOSIT("deposit"),
 

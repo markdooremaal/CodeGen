@@ -48,23 +48,28 @@ public class UsersApiController implements UsersApi {
     }
 
     //region createUser
+    //Create a user
     public ResponseEntity<User> createUser(@Parameter(in = ParameterIn.DEFAULT, description = "User object", required=true, schema=@Schema()) @Valid @RequestBody User body) {
+        //Validate accept header
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json")) || accept.contains("*/*")) {
+            //Add and return user
             User addedUser = userService.add(body);
             return new ResponseEntity<User>(addedUser, HttpStatus.CREATED);
-        } else{
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Accept hadder invalid");
-        }
+        } else
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Accept header invalid");
     }
     //endregion
 
     //region getAllUsers | Optional filters
+    //Get all useres with an optional filter
     public ResponseEntity<ArrayOfUsers> getAllUsers(@Parameter(in = ParameterIn.QUERY, description = "first-/lastname or both" ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema()) @Valid @RequestParam(value = "email", required = false) String email,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "Customer", "Employee" }
 )) @Valid @RequestParam(value = "role", required = false) String role,@Parameter(in = ParameterIn.QUERY, description = "" ,schema=@Schema(allowableValues={ "Active", "Inactive" }
 )) @Valid @RequestParam(value = "status", required = false) String status) {
+        //Validate accept header
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
+            //Add search criteria based on set parameters
             UserSearch criteria = new UserSearch();
             if(name != null)
                 criteria.setFirstName(name);
@@ -81,13 +86,14 @@ public class UsersApiController implements UsersApi {
             if(status != null)
                 criteria.setStatus(Status.fromValue(status));
 
+            //Find users based on specification
             Specification<User> specification = new UserSpecification(criteria);
             ArrayOfUsers users = userService.findAll(specification);
 
             return new ResponseEntity<ArrayOfUsers>(users, HttpStatus.OK);
         }
-
-        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Accept hadder invalid");
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Accept header invalid");
     }
     //endregion
 }

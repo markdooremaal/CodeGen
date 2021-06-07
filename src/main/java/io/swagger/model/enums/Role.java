@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.springframework.security.core.GrantedAuthority;
 
+//Enum for the role of an user
 public enum Role implements GrantedAuthority {
     CUSTOMER("customer"),
 

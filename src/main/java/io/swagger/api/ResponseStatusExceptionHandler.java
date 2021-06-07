@@ -11,8 +11,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+//Class to handle all errors
 @ControllerAdvice
 public class ResponseStatusExceptionHandler extends ResponseEntityExceptionHandler {
+    //Handle ResponseStatusExceptions only
     @Order(1)
     @ExceptionHandler(value = { ResponseStatusException.class })
     protected ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex, WebRequest request) {
@@ -21,6 +23,7 @@ public class ResponseStatusExceptionHandler extends ResponseEntityExceptionHandl
                 HttpStatus.valueOf(ex.getStatus().value()), request);
     }
 
+    //Handle the rest
     @Order(2)
     @ExceptionHandler(value = { Exception.class })
     protected ResponseEntity<Object> handleResponseException(Exception ex, WebRequest request) {

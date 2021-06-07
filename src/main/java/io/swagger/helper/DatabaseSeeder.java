@@ -1,4 +1,4 @@
-package io.swagger.service;
+package io.swagger.helper;
 
 import io.cucumber.java.bs.A;
 import io.swagger.model.BankAccount;
@@ -9,12 +9,16 @@ import io.swagger.model.enums.AccountType;
 import io.swagger.model.enums.Role;
 import io.swagger.model.enums.Status;
 import io.swagger.model.enums.Type;
+import io.swagger.service.BankAccountService;
+import io.swagger.service.TransactionService;
+import io.swagger.service.TransferService;
+import io.swagger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 //Class to add default data to the h2 database
 @Service
-public class SeederService {
+public class DatabaseSeeder {
 
     @Autowired
     UserService userService;
@@ -28,7 +32,9 @@ public class SeederService {
     @Autowired
     BankAccountService bankAccountService;
 
+    //Add default data to the database
     public void seedDatabase(){
+        //Add users
         User bram = new User();
         bram.setEmail("bram@bramsierhuis.nl");
         bram.setPassword(("test"));
@@ -69,6 +75,7 @@ public class SeederService {
         bank.setLastName("Inholland");
         userService.add(bank);
 
+        //Add bankaccounts
         BankAccount mainAccount = new BankAccount();
         mainAccount.setIban("nl01inho0000000001");
         mainAccount.setUserId(bank.getId());
@@ -135,6 +142,7 @@ public class SeederService {
         bank.addBankAccountsItem(mainAccount);
         userService.update(bank);
 
+        //Add transactions and transfers
         Transaction fromBramSavingsToBramRegular = new Transaction();
         fromBramSavingsToBramRegular.setAccountFrom(bramRegular.getIban());
         fromBramSavingsToBramRegular.setAccountTo(bramSavings.getIban());
@@ -162,7 +170,5 @@ public class SeederService {
         markWithdrawal.setAmount(20.0);
         markWithdrawal.setUserPerforming(mark.getId());
         transferService.storeTransfer(markWithdrawal);
-
-
     }
 }
