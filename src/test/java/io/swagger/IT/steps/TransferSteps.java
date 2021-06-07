@@ -159,7 +159,7 @@ public class TransferSteps extends Base {
 
         //Add headers
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(EMPLOYEE_JWT);
+        headers.setBearerAuth(CUSTOMER_JWT);
 
         makeTransfer(transfer);
     }

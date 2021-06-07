@@ -152,7 +152,7 @@ public class TransactionSteps extends Base {
         transaction.setAccountFrom(REGULAR1_IBAN);
         transaction.setAccountTo(REGULAR2_IBAN);
         transaction.userPerforming(USER1); //@TODO REmove
-        transaction.setAmount(99.0);
+        transaction.setAmount(101.0);
 
         //Add headers
         headers.setContentType(MediaType.APPLICATION_JSON);
