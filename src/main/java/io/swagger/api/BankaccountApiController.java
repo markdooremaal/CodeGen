@@ -63,6 +63,12 @@ public class BankaccountApiController implements BankaccountApi {
         this.request = request;
     }
 
+    /**
+     * Close an account
+     * Can only be done by an employee
+     * @param id
+     * @return BankAccount
+     */
     public ResponseEntity<Void> closeAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to close", required = true, schema = @Schema()) @PathVariable("id") String id) {
         User user = userService.findByToken(tokenProvider.resolveToken(request));
         if (user.getRole() == Role.CUSTOMER)
@@ -81,6 +87,11 @@ public class BankaccountApiController implements BankaccountApi {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
+    /**
+     * Get an account by id = iban
+     * @param id
+     * @return BankAccount
+     */
     public ResponseEntity<BankAccount> getAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to get", required = true, schema = @Schema()) @PathVariable("id") String id) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
@@ -93,6 +104,7 @@ public class BankaccountApiController implements BankaccountApi {
             if (bankAccount == null)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bankaccount found with this id");
 
+            // Check if logged-in customer owns specified account
             if (user.getRole() == Role.CUSTOMER) {
                 if (user.getBankAccounts().contains(bankAccount)) {
                     return ResponseEntity.status(HttpStatus.OK).body(bankAccount);
@@ -106,6 +118,13 @@ public class BankaccountApiController implements BankaccountApi {
         }
     }
 
+    /**
+     * Update BankAccount by id = iban
+     * Can only be executed by employee
+     * @param id
+     * @param body
+     * @return BankAccount
+     */
     public ResponseEntity<BankAccount> updateAccountById(@Parameter(in = ParameterIn.PATH, description = "IBAN of the Bank Account to update", required = true, schema = @Schema()) @PathVariable("id") String id, @Parameter(in = ParameterIn.DEFAULT, description = "BankAccount object", required = true, schema = @Schema()) @Valid @RequestBody BankAccount body) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {

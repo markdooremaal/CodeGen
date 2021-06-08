@@ -65,6 +65,12 @@ public class BankaccountsApiController implements BankaccountsApi {
         this.request = request;
     }
 
+    /**
+     * Create a new bankaccount.
+     * This can only be executed by an employee.
+     * @param body
+     * @return BankAccount
+     */
     public ResponseEntity<BankAccount> createAccount(@Parameter(in = ParameterIn.DEFAULT, description = "Transaction object", required = true, schema = @Schema()) @Valid @RequestBody BankAccount body) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
@@ -90,6 +96,11 @@ public class BankaccountsApiController implements BankaccountsApi {
         }
     }
 
+    /**
+     * Get all accounts
+     * @param userId
+     * @return ArrayOfBankAccounts
+     */
     public ResponseEntity<ArrayOfBankAccounts> getAllAccounts(@Parameter(in = ParameterIn.QUERY, description = "Get all the accounts for a specific user", schema = @Schema()) @Valid @RequestParam(value = "userId", required = false) Integer userId) {
         String accept = request.getHeader("Accept");
         if (accept != null && (accept.contains("application/json") || accept.contains("*/*"))) {
